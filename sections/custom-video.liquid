@@ -1,0 +1,43 @@
+<section class="Section" id="section-{{ section.id }}">
+  <div class="Container_video">
+    
+
+    
+      {{ section.settings.html }}
+    
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Video",
+  "class": "shopify-section--bordered",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sub-heading",
+      "default": "Sub-heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Your HTML"
+    },
+    {
+      "type": "html",
+      "id": "html",
+      "label": "HTML content",
+      "default": "<p>Write your own custom HTML content.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Advanced",
+      "name": "Custom Video",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,123 @@
+{%- if section.settings.enable_bar -%}
+  {%- unless section.settings.home_page_only and template != 'index' -%}
+    <section id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="announcement-bar" role="Announcement">
+    
+      <div class="AnnouncementBar">
+        <div class="AnnouncementBar__Wrapper">
+          <div class="container">
+          <div class="AnnouncementBar__Content Heading">
+            <div class="content-slider">
+            {%- if section.settings.link -%}
+              <div><a href="{{ section.settings.link }}">{{ section.settings.content | escape }}</a></div>
+              <div><a href="{{ section.settings.link }}">{{ section.settings.content1 | escape }}<img src="{{shoppay.png | asset-img_url}}"/></a></div>
+            {%- else -%}
+              
+            {% comment %}{% if template != 'index'%}
+              <div class="winter-sale"><p style="display:flex; justify-content:center;"><a style="color:#fff;" href="/collections/winter-sale"><b >Winter Sale</b> - Extra 40% OFF with code: <b>WINTER40</b> <a style="background:#fff; color: #000;
+    letter-spacing: inherit;padding: 2px 5px;font-size: 12px;border: 1px solid #420862;margin-left: 25px; display:inherit;" href="/collections/winter-sale">Shop Now</a></p>
+              </div>
+              {% endif %}{% endcomment %}
+
+              <!--<div><p><a href="https://www.elietahari.com/collections/election-day-sale"><b>Election Day Sale</b> - Extra 25% OFF With CODE: <b style="color:#010176">ELECT25</b><a style="background:#010176; color: #fff;
+    letter-spacing: inherit;padding: 2px 5px;font-size: 12px;border: 1px solid #420862;margin-left: 5px; display:inherit;" href="https://www.elietahari.com/collections/election-day-sale">Shop Now</a></p>
+              </div>-->
+              <!--<div><p><a href="https://www.elietahari.com/collections/elie-tahari-sale"><b style="color:#016E89;">New Markdowns - upto 70% OFF</b></a><a style="background:#00575C;color: #fff;
+    letter-spacing: inherit;padding: 2px 5px;font-size: 12px;border: 1px solid #420862;margin-left: 5px; display:inherit;" href="https://www.elietahari.com/collections/elie-tahari-sale">Shop Now</a></p>
+              </div>-->
+              <!--<div><p><a href="https://www.elietahari.com/collections/elie-tahari-designer"><b style="color:#ca0166;">4Th of July Sale&nbsp;</b>Up to 60% OFF</a><a style="background: #FF0164 ;color: #fff;
+    letter-spacing: inherit;padding: 2px 5px;font-size: 12px;border: 1px solid #420862;margin-left: 5px; display:inherit;}" href="https://www.elietahari.com/collections/elie-tahari-designer">Shop Now</a></p>
+              </div>-->
+              {% comment %}{% if template == 'index' %}
+              <div style="cursor:pointer" id="sms-ann" class="ann-sms"><p>SIGN UP FOR TEXTS FOR AN EXTRA 15% OFF YOUR FIRST PURCHASE + SPECIAL OFFERS!<span style="background: #3354a0; padding: 2px 6px; color: #fff; font-size: 12px;
+    cursor: pointer; margin-left: 5px;"> LET’S GO!</span></p></div>
+              <div style="cursor:pointer" id="sms-mobile-ann" class="ann-mobile-sms"><p>SIGN UP FOR TEXTS FOR AN EXTRA 15% OFF YOUR FIRST PURCHASE + SPECIAL OFFERS! <span style="background: #3354a0; padding: 2px 6px; color: #fff; font-size: 12px;
+    cursor: pointer; margin-left: 5px;"> LET’S GO!</span></p></div>
+                {% endif %}<div><p>{{ section.settings.content1 | escape }}<img style="width:82px; height:17px; margin-top:3px;" src="{{'shoppay.png' | asset_url}}" alt="shop-pay"></p></div>{% endcomment %}
+             <div ><p><a style="font-size: 10px;" href="/collections/summer-sale">Summer Sale — Extra 30% OFF</a></p></div>      
+              <div ><p><a style="font-size: 10px;" href="/collections/new-arrivals">Free Shipping on Orders $350+ </a> </p></div>
+            	{% comment %}<div><p>{{ section.settings.content | escape }}</p></div> {% endcomment %}
+              {%- endif -%}
+          </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+   <style>
+      #section-{{ section.id }} {
+        
+       /*background: {{ section.settings.background }};*/
+        background:#000;
+        color:#fff;
+        /*color: {{ section.settings.text_color }};*/
+        border-bottom: 1px solid #000;
+        padding: 3px 0;
+      }
+     @media only screen and (max-width: 600px) {
+  .winter-sale p a {
+    font-size:13px;
+  }
+        #section-{{ section.id }} {
+          padding:0;
+        }
+}
+    </style>
+
+
+
+
+    <script>
+      document.documentElement.style.setProperty('--announcement-bar-height', document.getElementById('shopify-section-announcement').offsetHeight + 'px');
+    </script>
+  {%- endunless -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_bar",
+      "label": "Enable bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "home_page_only",
+      "label": "Home page only",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "content",
+      "label": "Text",
+      "default": "Announce something here"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+	{
+      "type": "text",
+      "id": "content1",
+      "label": "Second Text",
+      "default": "Announce something here"
+    }
+  ]
+}
+{% endschema %}

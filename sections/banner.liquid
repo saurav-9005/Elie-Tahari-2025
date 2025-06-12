@@ -1,0 +1,61 @@
+<section id="section-{{ section.id }}" data-section-id="{{ section.id }}" >
+  <section class="banner">
+    <div class="img-banner">
+      {%- capture banner_content -%}
+        {%- assign mobile_image = section.settings.mobile_image | default: section.settings.image -%}
+    {%- if mobile_image -%}
+           <img
+             src="{{ mobile_image | img_url: 'x800' }}"
+             data-src="{{ mobile_image | img_url: 'x800' }}"
+             class="hidden-tablet-and-up">
+          {%- endif -%}
+          {%- if section.settings.image -%}
+           <img 
+             src="{{ section.settings.image | img_url: 'x1920' }}"
+             data-src="{{ section.settings.image | img_url: 'x1920' }}"
+            class="hidden-phone">
+          {%- endif -%}       
+       {% endcapture %}
+
+      <a
+        href="{{ section.settings.img_url }}"
+        id="banner-{{ section.settings.id }}"
+        class="banner-wrapped"
+      >
+        {{- banner_content -}}
+      </a>
+    </div>
+  </section>
+</section>
+{% schema %}
+{
+  "name": "banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Bigger Screen",
+      "info": "3840 X 1946px .JPG"
+    },
+    {
+     "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Small Screen",
+      "info": "750 X 1100px .JPG"
+    },
+    {
+      "type": "url",
+      "id": "img_url",
+      "label": "ButtonLink"
+    }
+
+  ],
+  "presets": [
+    {
+      "category": "banner",
+      "name": "banner",
+    "settings": {}
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,128 @@
+
+    <div class="influ-lists">
+      {%- for block in section.blocks -%}
+         {%- if block.settings.image == blank and block.settings.product-1 == blank and block.settings.product-2 == blank and block.settings.product-3 == blank -%}
+        {%- assign show_on_boarding = true -%}
+      {%- else -%}
+        {%- assign show_on_boarding = false -%}
+      {%- endif -%} 
+        <div class="influ-list">
+          <div class="influ-message">
+            <img src="https:{{ block.settings.image1 | img_url: '600x', format: 'jpg' }}" alt="{{ block.settings.image1.alt | escape }}" />
+          </div>
+          <div class="influ-products">
+            <img class="top-product" src="https://cdn.shopify.com/s/files/1/0350/8997/3385/files/Top_3_Gift_Picks_ff0d9b0b-497c-4479-b86b-6b8b2cb782f9.png?v=1669746804" alt="influencer top pick product" />       
+           {%- assign first_product = '' -%}
+          {%- assign products_count = 0 -%}
+
+          {%- capture shop_the_look_products -%}
+            {%- if show_on_boarding -%}
+              {%- for i in (1..3) -%}
+                {%- assign products_count = products_count | plus: 1 -%}
+
+                <div class="ShopTheLook__ProductItem Carousel__Cell {% if forloop.first %}is-selected{% endif %}" data-product-url="#">
+                  <div class="ProductItem">
+                    <div class="ProductItem__Wrapper">
+                      <a href="#" class="ProductItem__ImageWrapper">
+                        {%- capture placeholder -%}{% cycle 'product-1', 'product-2', 'product-3' %}{%- endcapture -%}
+                        {{ placeholder | placeholder_svg_tag: 'ProductItem__Image PlaceholderSvg PlaceholderSvg--dark' }}
+                      </a>
+
+                      <div class="ProductItem__Info ProductItem__Info--center">
+                        <h2 class="ProductItem__Title Heading">{{ 'home_page.onboarding.product_title' | t }}</h2>
+
+                        <div class="ProductItem__PriceList Heading">
+                          <span class="ProductItem__Price Price Text--subdued">{{ 4500 | money_without_trailing_zeros }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for i in (1..3) -%}
+                {%- assign product_setting = 'product-' | append: i -%}
+                {%- assign product = all_products[block.settings[product_setting]] -%}
+
+                {%- if product == empty -%}
+                  {%- continue -%}
+                {%- endif -%}
+
+                {%- if first_product == blank -%}
+                  {%- assign first_product = product -%}
+                {%- endif -%}
+
+               
+
+                <li><div class="ShopTheLook__ProductItem" data-product-url="{{ product.url | escape }}">
+                  {% render 'product-item', product: product, show_product_info: true, show_vendor: false, show_price_on_hover: false, show_color_swatch: false, show_labels: false %}
+                </div></li>
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endcapture -%}
+            <ul> {{ shop_the_look_products }}</ul>
+            
+          </div>
+        </div>
+        {% endfor %} 
+    </div>
+ 
+
+{% schema %}
+{
+  "name": "influencers3",
+  "class": "shopify-section--bordered",
+  "max_blocks": 19,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "For best results (especially on mobile), we recommend using images with the same dimensions."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "look",
+      "name": "Look",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image1",
+          "label": "Image",
+          "info": "975 x 1185px .jpg recommended (vertical image) or 1200 x 1200px .jpg recommended (square image)."
+        },        
+        {
+          "type": "header",
+          "content": "Product 1"
+        },
+        {
+          "type": "product",
+          "id": "product-1",
+          "label": "Product",
+          "info": "Product not showing correctly?"
+        },
+        {
+          "type": "header",
+          "content": "Product 2"
+        },
+        {
+          "type": "product",
+          "id": "product-2",
+          "label": "Product",
+          "info": "Product not showing correctly? "
+        },
+        {
+          "type": "header",
+          "content": "Product 3"
+        },
+        {
+          "type": "product",
+          "id": "product-3",
+          "label": "Product",
+          "info": "Product not showing correctly? "
+        }
+      ]
+    }
+  ]
+ 
+}
+{% endschema %}

@@ -1,0 +1,132 @@
+<style>
+  #shopify-section-template--16199486210257__about_UcDUMY {
+    margin-bottom:5%;
+  }
+  
+  .about_elie {
+    display: flex;
+        flex-direction: inherit;
+        align-items: center;
+        padding-top: 0;    
+    margin-bottom:20px;
+    margin-top:20px;
+    width:100%;
+  }
+  .About .FeaturedMap__MapContainer {
+    flex:inherit;
+    height:inherit;
+  }
+  .about_elie__Info {
+    flex: none;
+        min-width: 370px;
+        width: 50%;
+        padding: 50px 60px;
+    position: relative;
+    margin: 0 auto;
+    background: #fff;
+    text-align: left;
+    z-index: 1;
+  }
+  .CollectionItem__Content.CollectionItem__Content--bottomLeft {
+    display:none;
+  }
+  .about_elie .
+  .CollectionItem__Wrapper .CollectionItem__Content.CollectionItem__Content--bottomLeft {
+    display:none;
+  }
+  .SectionHeader.SectionHeader--center {
+    margin-bottom:20px;
+  }
+  .SectionHeader .SectionHeader__SubHeading.u-h2 {
+    font-size:1.6em;
+  }
+  @media only screen and (max-width: 1000px) {
+  .about_elie {
+    flex-direction: column;
+  }
+    .about_elie__Info {
+      padding: 50px 20px;
+      width:100%;
+    }
+}
+</style>
+<section class="Section Section--spacingNormal About" id="section-{{ section.id }}" data-section-type="map" data-section-id="{{ section.id }}" data-section-settings='{{ section_settings | escape }}'>
+  <div class="Container">
+    <div class="about_elie">
+      <div class="FeaturedMap__MapContainer Image--lazyLoad Image--fadeIn">
+        <img 
+             src="{{ section.settings.image | img_url: 'x900' }}"
+             data-src="{{ section.settings.image | img_url: 'x900' }}"
+            >
+      </div>
+      <div class="about_elie__Info">
+        
+        {% if section.settings.address != blank %}
+          <div class="FeaturedMap__Address Rte">
+            {{ section.settings.address }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.elie != blank %}
+          <div class="FeaturedMap__Hours Rte">
+            {{ section.settings.elie }}
+          </div>
+        {% endif %}       
+      </div>
+
+      
+     
+    </div>
+  </div>
+
+
+</section>
+
+{% schema %}
+{
+  "name": "About",
+  "class": "shopify-section__featured-map shopify-section--bordered",
+  "settings": [
+    
+    {
+      "type": "richtext",
+      "id": "elie",
+      "label": "about",
+      "default": "<p>Elie Tahari is a global fashion brand that's been a ready-to-wear and professional staple in womenswear for over 45 years.</p>"
+    },   
+    {
+      "type": "header",
+      "content": "Picture"
+    },     
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Displayed if the map isn’t loaded"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Store information",
+      "name": "About",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
