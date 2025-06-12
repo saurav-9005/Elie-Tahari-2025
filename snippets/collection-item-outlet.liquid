@@ -1,0 +1,31 @@
+{%- assign collection_image = block.settings.image | default: collection.image | default: collection.products.first.featured_image -%}
+
+<a href="{{ block.settings.button_link | default: collection.url }}" aria-label="{{block.settings.title}}" >
+    <img src="{{ collection_image | img_url: '1000x' }} 1000w" />
+  <span class="CollectionItem__Content CollectionItem__Content--{{ block.settings.content_position | default: 'bottomLeft' }}">
+      <header class="SectionHeader">        
+        
+        <h2 class="SectionHeader__Heading SectionHeader__Heading--emphasize Heading u-h1">{{ block.settings.title | default: collection.title | escape }}</h2>
+		
+        {%- if block.settings.subheading != blank -%}
+          <h3 class="SectionHeader__SubHeading Heading u-h6">{{ block.settings.subheading | escape }}</h3>
+        {%- endif -%}
+        {%- if block.settings.subimage != blank -%}
+          <img src="{{ block.settings.subimage | img_url: '169x' }}" alt="discount amount"/>
+        {%- endif -%}
+        
+        <span class="SectionHeader__ButtonWrapper">
+          {%- if block.settings.button_text != blank -%}
+            <span style="padding-top:7px;" class="CollectionItem__Link Button" aria-label="{{block.settings.title}}" >{{ block.settings.button_text | escape }} </br> <span style="text-align: center;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #FFF;"> Up to 70% off</span> </span>
+          {%- else -%}
+            <span class="CollectionItem__Link Button">{{ 'collection.general.view_products' | t }}</span>
+          {%- endif -%}
+        </span>
+        
+      </header>
+    
+    </span>
+</a>

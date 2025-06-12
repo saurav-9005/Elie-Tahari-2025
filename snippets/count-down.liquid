@@ -1,0 +1,164 @@
+
+<!--{% include '//count-down',
+	title: "Extra 40% Off Dresses' Code BESTDRESS Ends in",
+  	url: "https://www.elietahari.com/collections/elie-tahari-sale",
+  	end_date: "Mar 08, 2021 23:59:59";
+%}
+<div class="timer"> 
+  <div class="offer">    
+      <div class="timer__title">
+        <span>{{tile}}</span> 
+        <span class="code">Code: <b>{{code}}</b></span>
+        <a class="deal-btn" href={{ url }}>Shop Now</a>
+      </div>  
+    </div>
+</div>-->
+
+
+{% if end_date != blank %}
+<div id="timer" class="timer">
+   <div class="offer">
+    
+  {% if title != blank %} 
+   <div class="timer__title">
+      <a href="https://www.elietahari.com/collections/friends-family"><span>{{title}}</span></a> 
+    <!--<span class="code">Code: <b>{{code}}</b></span>-->
+    <!--<a class="deal-btn" href={{ url }}>Shop Now</a>-->
+  </div>
+  {% endif %}
+    
+  <div class="timer-display">
+    <p>Ends In:</p>
+    <div class="timer-block" style="display:none">
+      <span class="timer-block__num js-timer-days2">00</span>:
+      <!-- <span class="timer-block__unit">Days</span> -->
+    </div>
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-hours2">00</span>:
+      <!-- <span class="timer-block__unit">Hours</span> -->
+    </div>
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-minutes2">00</span>:
+      <!-- <span class="timer-block__unit">Minutes</span> -->
+    </div>
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-seconds2">00</span>
+      <!-- <span class="timer-block__unit">Seconds</span> -->
+    </div>
+    
+  </div>
+     <a class="deal-btn" href={{ url }}>Shop Now</a>
+  </div>
+</div>
+<style>
+/* styles for timer */
+  .outlet .timer {
+   background:#3f3fda; 
+  }
+  .outlet .code{
+   color:#fff; 
+  }
+  .outlet .deal-btn:hover {
+    background: #4d4dff;
+  }
+  .timer {
+    background: #082979; 
+    color: #fff;
+    padding: 5px 0;
+    /*background-image: repeating-linear-gradient(-45deg, rgba(255,255,255, 0.25), rgba(255,255,255, 0.25) 1px, transparent 1px, transparent 6px);*/
+  }
+  .offer{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+  .timer__title {
+    display: inherit;
+    font-size: 16px !important;
+    margin: 0 8px 0 0;
+  }
+  .timer__title .code{
+    margin:0 10px;
+  }
+  .timer-display {
+    font-size: 16px;
+    display: flex;
+    margin: 0 18px 0 0;
+  }
+  .timer-display p {
+    margin: 0 2px 0 0;
+  }
+  
+  .timer-block span{
+   font-size:16; 
+  }
+  offer:hover, a:hover {
+   text-decoration:underline; 
+  }
+  .deal-btn {
+    font-size: 12px;
+    text-decoration: none;
+    text-transform: capitalize;
+    line-height: 21px;
+    color: #fff;
+    padding: 2px 5px;
+    margin: 0 0 0 0;
+    text-transform: uppercase;
+    border-radius: 3px;
+    border:1px solid #fff;
+  }
+  .deal-btn:hover{
+    background: #000;
+    text-decoration: none;
+    color:#fff;
+  }
+
+
+  @media only screen and (max-width: 640px) {
+    .offer {
+      display:inherit;
+
+    }
+    .timer__title .code {
+      width: 100%;
+      
+      margin: 0 0 10px 0;
+    }
+    .deal-btn {
+      font-size: 13px;
+    padding: 3px 7px;
+    }
+    .timer-display {
+      justify-content: center;
+    }
+
+    #timer .timer__title .code{
+      margin: 0 0 0 0;
+    }
+  }
+</style>
+
+<script type="text/javascript">
+  var second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      day = hour * 96;
+  var countDown = new Date('{{- end_date -}}').getTime();
+  var addLeadingZeros = function(number){
+    return (number < 10) ? "0"+number : number;
+}
+      x = setInterval(function() {
+      var now = new Date().getTime(),
+          distance = countDown - now;
+      document.querySelector('.js-timer-days2').innerText = addLeadingZeros(Math.floor(distance / (day))),
+      document.querySelector('.js-timer-hours2').innerText = addLeadingZeros(Math.floor((distance % (day)) / (hour))),
+      document.querySelector('.js-timer-minutes2').innerText = addLeadingZeros(Math.floor((distance % (hour)) / (minute))),
+      document.querySelector('.js-timer-seconds2').innerText = addLeadingZeros(Math.floor((distance % (minute)) / second));
+    
+    if (distance < 0){
+     clearInterval(x);
+     document.getElementById("timer").style.display = 'none';
+    }
+    }, second)
+</script>
+{% endif %}

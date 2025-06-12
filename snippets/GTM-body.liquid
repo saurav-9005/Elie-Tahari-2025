@@ -1,0 +1,135 @@
+<script>
+  var dataLayerData = {
+  	'page': {
+  		'template': {{ template | json }},
+  		'searchTerm': {{ search.terms | json }},
+  		'searchResults': {{ search.results_count | json }},
+  		'currentPage': {{ current_page | json }},
+  		'currency': {{ shop.currency | json }},
+  		'collection': {{ collection.title | json }}
+  	},
+  	'product': {},
+  	'customer': {},
+  	'collection': {},
+  	'cart': {},
+     'checkout':{},
+  };
+  {%- if collection and template != "product" -%}
+  	dataLayerData.collection = {
+  		'item_list_name': {{ collection.title | json }},
+  		'productCount': {{ collection.products_count | json }},
+      'products': []
+
+  	};
+      {%- for product in collection.products -%}
+          {%- assign variantsAvailable = 0 -%}
+          {%- assign variantStock = 0 -%}
+          {%- assign stockNotManaged = false -%}
+          {%- for variant in product.variants -%}
+            {%- if variant.available == true -%}
+              {%- assign variantsAvailable = variantsAvailable | plus: 1 -%}
+              {%- if variant.inventory_management == null -%}
+                  {%- assign stockNotManaged = true -%}
+              {%- else -%}	
+                  {%- assign variantStock = variantStock | plus: variant.inventory_quantity -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if stockNotManaged == true -%}{%- assign variantStock = null -%}{%- endif -%}
+          dataLayerData.collection.products.push({
+            	'item_id': {{ product.id | json }},
+              'item_name': {{ product.title | json }},
+              'price': {{ product.price | money_without_currency | json }},
+              'item_category': {{ product.type | json }},
+              'tags': {{ product.tags | json}},
+              'item_brand': {{ product.vendor | json }},
+              'inStock': {{ product.available | json }},
+              'quantity': {{ variantStock | json }},
+              'hasNoVariants': {{ product.has_only_default_variant | json }},
+              'numVariants': {{ product.variants.size | json }},
+              'variantsInStock':  {{ variantsAvailable | json}},
+              'variants': [
+                  {%- for variant in product.variants -%}
+                      {
+                          'name': {{ variant.title | json }},
+                          'inStock': {{ variant.available }},
+                          'price': {{ variant.price | money_without_currency | json }}
+                      },
+                  {%- endfor-%}
+              ]
+          }); 
+  	{%- endfor -%}
+  {%- endif -%}
+  {%- if product -%}
+      {%- assign variantsAvailable = 0 -%}
+    	{%- assign variantStock = 0 -%}
+    	{%- assign stockNotManaged = false -%}
+      {%- for variant in product.variants -%}
+        {%- if variant.available == true -%}
+          {%- assign variantsAvailable = variantsAvailable | plus: 1 -%}
+    		{%- if variant.inventory_management == null -%}
+  			{%- assign stockNotManaged = true -%}
+  	    {%- else -%}	
+    			{%- assign variantStock = variantStock | plus: variant.inventory_quantity -%}
+    		{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+     
+    	{%- if stockNotManaged == true -%}{%- assign variantStock = null -%}{%- endif -%}
+  	dataLayerData.product = {
+  		'item_id': {{ product.id | json }},
+  		'item_name': {{ product.title | json }},
+  		'price': {{ product.price | money_without_currency | json }},
+  		'item_category': {{ product.type | json }},
+  		'tags': {{ product.tags | json}},
+  		'item_brand': {{ product.vendor | json }},
+  		'inStock': {{ product.available | json }},
+  	    'quantity': {{ variantStock | json }},
+      	'hasNoVariants': {{ product.has_only_default_variant | json }},
+  		'numVariants': {{ product.variants.size | json }},
+  	    'variantsInStock':  {{ variantsAvailable | json}},
+  		'variants': [
+  			{%- for variant in product.variants -%}
+  				{
+  					'name': {{ variant.title | json }},
+  					'inStock': {{ variant.available }},
+  					'price': {{ variant.price | money_without_currency | json }}
+  				},
+  			{%- endfor -%}
+  		]
+  	}; 
+  {%- endif -%}
+  {%- if customer -%}
+  	dataLayerData.customer = {
+  		'id': {{customer.id | json }},
+  		'firstName': {{ customer.first_name | json }},
+  		'surname': {{ customer.last_name | json }},
+  		'email': {{ customer.email | json }},
+  		'ordersCount': {{ customer.orders_count | json }},
+  		'totalSpent': {{ customer.total_spent | money_without_currency | json }},
+  		'acceptsMarketing': {{ customer.accepts_marketing | json }},
+        	'tags': {{ customer.tags | json }}
+  	};
+  {%- endif -%}
+  {%- if cart -%}
+  	dataLayerData.cart.total = {{ cart.total_price | money_without_currency | json }};
+  	dataLayerData.cart.count = {{ cart.item_count | json }};
+      dataLayerData.cart.products = [];
+  	{%- for item in cart.items -%}
+        dataLayerData.cart.products.push({
+        	'item_name': {{ item.title | json }},
+          'item_id': {{ item.product.id | json }},
+          'item_category': {{ item.product.type | json }},
+          'item_variant': {{ item.variant.title | json }},
+          'quantity': {{ item.quantity | json }},
+          'price': {{ item.line_price | money_without_currency | json }}
+        });
+  	{%- endfor -%}
+  {%- endif -%}
+  {% if checkout  %}
+      dataLayerData.checkout.order.id = {{ checkout.id}}
+  {% endif %}
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+  window.dataLayer.push({'event': 'browser_activity' , 'ecommerce': dataLayerData});
+</script>

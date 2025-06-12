@@ -1,0 +1,61 @@
+<script>
+  window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+  dataLayer.push({
+    event: "begin_checkout",
+    ecommerce: {        
+        value: {{- checkout.total_price | times: 0.01 | json -}},       
+        currency: "USD",
+        {% if checkout.discount_applications %}
+        coupon: {{ checkout.discount_applications[0].title | json }},
+        {% endif %}
+        items: [
+        {%- for line_item in checkout.line_items -%}
+            {
+                item_id: {{- line_item.sku | json -}},
+                item_name: {{- line_item.product.title | json -}},
+                item_brand: {{- line_item.vendor | json -}},
+                item_category: {{- line_item.product.type | json -}},
+                item_variant: {{- line_item.variant.title | json -}},
+                price: {{- line_item.final_price | times: 0.01 | json -}},
+                quantity: {{- line_item.quantity | json -}},
+                item_image: "{{- line_item.image -}}"
+            },
+        {%- endfor -%}
+        ],
+    }
+});
+  dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+dataLayer.push({
+  event: "purchase",
+  ecommerce: {      
+      {%- if order.name -%}
+        transaction_id: {{- order.name | json -}},
+      {%- else -%}
+        transaction_id: {{- checkout.id | json -}},
+      {%- endif -%}
+      order_created: {{- order.created_at | date: '%B %d, %Y' | json -}},
+      value: {{- checkout.total_price | times: 0.01 | json -}},
+      tax: {{- checkout.tax_price | times: 0.01 | json -}},
+      shipping: {{- checkout.shipping_price | times: 0.01 | json -}},
+      currency: "USD",
+      {% if checkout.discount_applications %}
+        coupon: {{ checkout.discount_applications[0].title | json }},
+      {% endif %}
+      items: [
+      {%- for line_item in checkout.line_items -%}
+        {
+          item_id: {{- line_item.sku | json -}},
+          item_name: {{- line_item.product.title | json -}},
+          item_brand: {{- line_item.vendor | json -}},
+          item_category: {{- line_item.product.type | json -}},
+          item_variant: {{- line_item.variant.title | json -}},
+          price: {{- line_item.final_price | times: 0.01 | json -}},
+          quantity: {{- line_item.quantity | json -}},
+          item_image: "{{- line_item.image -}}"
+        },
+      {%- endfor -%}
+    ],
+  }
+});
+</script>
