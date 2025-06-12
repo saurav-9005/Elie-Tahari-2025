@@ -1,0 +1,10 @@
+<div id= "hiddenProductId" style="display:none;" data-product-id="{{product.id}}"></div>
+{% section 'product-template' %}
+{% section 'product-recommendations' %}
+{% section 'recently-viewed-products' %}
+
+<script>
+  window.ShopifyXR=window.ShopifyXR||function(){(ShopifyXR.q=ShopifyXR.q||[]).push(arguments)};
+  ShopifyXR('addModels', {{ product.media | where: 'media_type', 'model' | json }});
+</script><div class="slide-placeholder" style="opacity:0.1;height:1px;overflow:hidden;position:absolute;pointer-events:none;">
+</div>{%comment%}FIXED BY VIP:2020-05-01 14:49:08 UTC{%endcomment%}

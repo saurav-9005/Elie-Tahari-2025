@@ -1,0 +1,229 @@
+{% comment %}{% section 'page-contact-template' %} {% endcomment %}
+<style>
+  /** contact page css **/
+.PageContent.PageContent--narrow.contact_Page {
+  max-width:1084px;
+  padding: 0 30px;
+}
+.ac {
+  margin-top: 10px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+.ac .ac-header {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #8b8b8b;
+}
+.ac .ac-trigger {
+  font-size: 18px;
+  color: #111;
+  text-align: left;
+  width: 100%;
+  padding: 10px 30px 10px 10px;
+  display: block;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.25s ease;
+  position: relative;
+  text-decoration: none;
+  margin: 0;
+  border: 0;
+}
+.ac .ac-trigger::after {
+  content: "+";
+  text-align: center;
+  width: 15px;
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  position: absolute;
+  right: 10px;
+  top: 50%;
+}
+.ac .ac-trigger:focus {
+  color: #243F8B;
+}
+.ac .ac-panel {
+  overflow: hidden;
+  transition-property: height, visibility;
+  transition-timing-function: ease;
+}
+.ac .ac-panel .ac-text {
+  font-size: 14px;
+  color: #111;
+  padding: 10px;
+  margin: 1% 0 0 0;
+  font-size:16px;
+}
+.ac.js-enabled .ac-panel {
+  visibility: hidden;
+}
+.ac.is-active .ac-panel {
+  visibility: visible;
+}
+.ac.is-active > .ac-header .ac-trigger::after {
+  content: "–";
+}
+
+.email, .chat, .Phone {
+  width: 100%;
+  display: inline-block;
+  margin-top: 2%;
+  border-bottom:1px solid #e1dcdc;
+  font-size:16px;
+}
+
+.left {
+  float: left;
+  width: 70%;
+  margin-bottom:2%;
+  font-size:16px;
+}
+
+ 
+.right button, .right a {
+   float: right;
+    background-color: #243F8B;
+    color: #fff;
+    padding: 1% 3%;
+    /* border: none; */
+    margin-top: 16px;
+    width: 25%;
+    text-align: center;
+    cursor: pointer;
+    letter-spacing: inherit;
+    font-size: 13px;
+}
+
+.left h2 {
+    text-decoration: underline;
+}
+
+.Modal__Close {
+    display: block;
+    margin: 25px auto 0;
+    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    right: 5%;
+    background: #000;
+    color: #fff;
+    /* background: #ffffff73; */
+}
+  hr {
+    color:#EBEBEB;
+  }
+  @media only screen and (max-width: 640px) {
+  .left {
+    float: left;
+    width: 100%;
+    margin-bottom: 0;
+}
+    .right button, .right a {
+    float: left;
+    background-color: #243F8B;
+    color: #fff;
+    padding: 1% 3%;
+    /* border: none; */
+    margin-top: 16px;
+    width: 39%;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+}
+</style>
+<div class="PageContent PageContent--narrow contact_Page">
+  <header class="PageHeader">
+    <div class="SectionHeader SectionHeader--center">
+      <h1 class="SectionHeader__Heading Heading u-h1">CONTACT US</h1>
+    </div>
+  </header>
+<div class="accordion-container">
+  <div class="ac">
+    <h2 class="ac-header">
+      <button class="ac-trigger">Get in Touch</button>
+    </h2>
+    <div class="ac-panel">
+      <div class="ac-text">
+        <p style="margin-top:1%;">We’re here to help. Our customer service team is available Monday – Friday from 9:00am to 5:00pm EST. If you need help with a return, please visit our <a  style="color:#384d96; text-decoration:underline; "href="https://www.elietahari.com/pages/returns">Returns page</a> to learn more.</p>
+        
+        <div class="email">
+          <div class="left">
+          <h2>Email</h2>
+          <p>To reach our team by email, please send to customerservice@elietahari.com or click “Email Us” to share your feedback and contact information.</p>
+        </div>
+          <div class="right">
+              {%- assign contact_form_page = pages['contact-form-1'] -%}
+<button type="button" class="Link Button Button--primary" data-action="open-modal" aria-controls="modal-{{ contact_form_page.handle }}">
+                Email Us
+              </button>            
+          </div>
+      </div>
+        
+        <div class="chat">
+        <div class="left">
+          <h2>Chat</h2>
+          <p>To chat with a member of our customer service team, click on the blue conversation bubble icon in the bottom right corner of our website, or click “Chat with Us”</p>
+        </div>
+          <div class="right">
+            <button class="Button Button--primary" onclick="GorgiasChat.open();" tabindex="0">Chat with Us</button>
+          </div>
+        </div>
+       
+        <div class="Phone">
+          <div class="left">
+            <h2>Phone</h2>
+            <p>To reach our customer service team by phone, please call us at (800) 649-6179 or + (001) 800-649-6179 for international customers.</p>
+          </div>
+          <div class="right">
+            <a class="Button Button--primary" href="tel:8006496179">Call Us At +1 800-649-6179</a>
+          </div>
+        </div>
+    </div>
+  </div>
+  </div>
+  <div class="ac">
+    <h2 class="ac-header">
+      <button class="ac-trigger">Careers</button>
+    </h2>
+    <div class="ac-panel">
+      <div class="ac-text">
+        <div class="left">Thank you for your interest in a career with Elie Tahari. To inquire about available opportunities, please email careers@elietahari.com.</div>
+        <div class="right"> <a  class="Button Button--primary" href="mailto:careers@elietahari.com">Email US</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ac">
+    <h2 class="ac-header">
+      <button class="ac-trigger">Headquarters</button>
+    </h2>
+    <div class="ac-panel">
+      <p class="ac-text">Our corporate office is located at 16 Bleeker Street, Millburn, NJ 07041</p>
+    </div>
+  </div>
+</div>
+</div>
+{%- capture product_modals_content -%}{% section 'page-contact-template' %} {%- endcapture -%}
+{%- capture product_modals -%}
+    <div id="modal-{{ contact_form_page.handle }}" class="Modal Modal--dark Modal--fullScreen Modal--pageContent" aria-hidden="true" role="dialog" data-scrollable>    
+
+      <div class="Modal__Content Rte">
+        {{ product_modals_content }}
+      </div>
+
+      <button class="Modal__Close RoundButton RoundButton--large" data-animate-bottom data-action="close-modal" aria-label="Close">{% render 'icon' with 'close' %}</button>
+    </div>
+  {%- endcapture -%}
+
+  <div class="Product__OffScreen">
+  {{- product_modals -}}
+</div>
+ <script src="{{ 'accordion.min.js' | asset_url }}"></script>
+<script>
+  new Accordion('.accordion-container', {
+    openOnInit: [0]
+  })
+ 
+</script>

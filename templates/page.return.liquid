@@ -1,0 +1,207 @@
+<style>
+    /* Add your CSS styles here */
+    .store {
+      margin-bottom: 10px;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3; /* Light grey */
+      border-top: 4px solid #3498db; /* Blue */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  .Container-Zipstore {
+    text-align:center
+  }
+  .Container-Zipstore h2 {
+    letter-spacing: 1px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .Container-Zipstore #zipcode {
+    border: 1px solid #444;
+    font-size: 15px;
+    padding: 1%;
+    color: #444;
+    width: 50%;
+  }
+  .Container-Zipstore #searchBtn {
+    background: #000;
+    color: #fff;
+    padding: 5px 20px;
+    width: 20%;
+  }
+  #storeList {
+       
+    width: 71%;
+    margin: 0 auto;
+    margin-top: 2%;
+    padding: 2% 0;
+  }
+  #storeList .store {
+    background: #f3f3f3;
+    padding: 2% 0;
+    border-bottom: 1px solid #ddd;
+  }
+  #storeList .store p {
+    margin-bottom:0;
+  }
+  #storeList .store .distance {
+    font-size:15px;
+  }
+  #storeList .store a {
+    color:blue;
+  }
+  .or {
+    text-align:center; position:relative; top:24px; font-weight:bold;
+  }
+  @media screen and (max-width: 640px) {
+.Container-Zipstore #zipcode {
+  padding:3%;
+}
+    .Container-Zipstore #searchBtn {
+      width:35%;
+    }
+    #storeList {
+      width:94%;
+    }
+    .or {
+      top:13px;
+    }
+  }
+  </style>
+  <div class="Container">
+  <header class="PageHeader">
+    <div class="SectionHeader SectionHeader--center">
+      <h1 class="SectionHeader__Heading Heading u-h1">{{ page.title }}</h1>
+    </div>
+  </header>
+
+  <div class="PageContent PageContent--narrow Rte">
+    <!--<h3><u>Extended Return Policy</u></h3>
+    <p>Returns on eligible items purchased between November 11, 2024 and December 31, 2024 will be accepted for return or exchange by January 31, 2025.</p>
+    <h3><span style="text-decoration: underline;"></span></h3>-->
+<h3 style="letter-spacing: inherit;"><span style="text-decoration: underline;"></span><span style="text-decoration: underline;">Return Policy</span></h3>
+<p>Full price merchandise can be returned for a full refund or exchanged within 30 days of the delivery date.
+  <br><br>Merchandise discounted 30% or less from MSRP can be returned for a full refund or exchanged within 30 days of the delivery date.
+  <br><br>Sale merchandise discounted between 31-49% from MSRP is eligible for an exchange or merchandise credit only within 30 days of the delivery date.
+  <br><br>Final Sale merchandise or items discounted 50% or more from MSRP cannot be returned or exchanged.
+  <br><br>Elie Tahari offers a one-time price adjustment per order within 14 days of purchase. Final sale merchandise is not eligible for any price adjustment.
+  <br><br>At this time, Elietahari.com only offers UPS return labels for domestic return addresses which we process at a $10 fee. The customer is required to pay shipping and taxes on return orders sent from outside the U.S.
+  <br><br>Returns will be processed within 7-14 business days of receipt. Once processed, eligible merchandise credits can take up to 24 hours to be delivered.</p>
+<p>We are not responsible for any items returned to us in error.</p>
+    <p style="width: 100%; text-align: center; margin: 8% 0 0 0;">
+  <a href="https://www.elietahari.com/a/return" style="background: #0f3790; padding: 2% 12%; color: #fff; border-radius: 5px;" target="_blank">
+    <span><strong>Start Your Return Online</strong></span></a>
+</p>
+    <p class="or" style="">OR</p>
+<p style="width: 100%; text-align: center; margin: 8% 0;">
+  <a onclick="showZipstore()" style="background: #000; padding: 2% 12%; color: #fff; border-radius: 5px; cursor: pointer;" target="_blank">
+    <span><strong>Return To Store Location</strong></span></a>
+</p>
+    <div class="Container-Zipstore" style="display: none;">
+     <h2>Find Nearby Stores</h2>
+      <input type="text" id="zipcode" name="zipcode" placeholder="Enter ZIP code">
+      <button id="searchBtn">Search</button>
+    <div class="loader" id="loader"></div>
+      <div id="storeList">
+        <!-- Store locations will be dynamically populated here -->
+      </div>
+    </div>
+<h5><strong>RETURN CONFIRMATION EMAILS</strong></h5>
+<p>You will receive a return confirmation email once your RMA has been submitted into our system. Once your order has been received and processed, we will send you an email confirmation.</p>
+<p>Refunds and Credits will be applied to the original payment method provided or with an Elie Tahari Gift Card based on our Return Policy.</p>
+<p>Refunds will be applied to your payment method within 3-5 business days after processing the return. Your bank may require additional time to post this transaction to your account. Please allow 1 to 2 billing cycles from the day you return your merchandise for your account to be credited.</p>
+  </div>
+</div>
+
+
+  <script>
+    function showZipstore() {
+    var zipstoreContainer = document.querySelector('.Container-Zipstore');
+    zipstoreContainer.style.display = 'block';
+  }
+    function findNearbyStores(zipcode) {
+
+       const loader = document.getElementById("loader");
+      const geocoder = new google.maps.Geocoder();
+      const storeList = document.getElementById("storeList");
+
+      // Show loader while searching
+      loader.style.display = "block";
+      storeList.innerHTML = "";
+
+      // Geocode the entered ZIP code to get its latitude and longitude
+      geocoder.geocode({ 'address': zipcode }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          const userLocation = results[0].geometry.location;
+          const stores = [];
+          const storeLocations = [
+            { name: "Elie Tahari Aventura", address: "19575 Biscayne Blvd Suite #1195, Aventura, FL, 33180, United States", location: { lat: 25.957400, lng: -80.141880 } },
+            { name: "Elie Tahari Fashion Island", address: "575 Newport Center Dr, Newport Beach, CA, 92660", location: { lat: 33.616910, lng: -117.872550 } },
+            { name: "Elie Tahari National Harbor", address: "6800 Oxon Hill Rd #835, Oxon Hill, MD, 20745", location: { lat: 38.795800, lng: -77.001110 } },
+            { name: "Elie Tahari Pembroke", address: "427 145th Terrace Suite, 4040 Pembroke Pines, FL, 33027", location: { lat: 25.993094, lng: -80.357246 } },
+            { name: "Elie Tahari Santa Monica Place", address: "395 Santa Monica PL, Santa Monica, CA, 90401", location: { lat: 35.10369285111498, lng: -118.68671999632573 } },
+             // Add more store locations as needed
+          ];
+
+          // Calculate distance between user's location and store locations
+          storeLocations.forEach(store => {
+            const storeLocation = new google.maps.LatLng(store.location.lat, store.location.lng);
+            const distance = google.maps.geometry.spherical.computeDistanceBetween(userLocation, storeLocation) * 0.000621371; // Convert meters to miles
+            if (distance <= 30) {
+              stores.push({ ...store, distance: distance.toFixed(2) });
+            }
+          });
+
+          displayStores(stores);
+        } else {
+          displayNoStoresMessage();
+        }
+        // Hide loader after search completes
+        loader.style.display = "none";
+      });
+    }
+
+    function displayStores(stores) {
+      const storeList = document.getElementById("storeList");
+      storeList.innerHTML = "";
+
+      if (stores.length === 0) {
+        displayNoStoresMessage();
+      } else {
+        stores.forEach(store => {
+          const storeDiv = document.createElement("div");
+          storeDiv.classList.add("store");
+          storeDiv.innerHTML = `
+            <p><strong>${store.name}</strong></p>
+            <p>${store.address}</p>
+            <p class="distance">Distance: ${store.distance} miles</p>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.address)}" target="_blank">Get Direction</a>
+          `;
+          storeList.appendChild(storeDiv);
+        });
+      }
+    }
+
+    function displayNoStoresMessage() {
+      const storeList = document.getElementById("storeList");
+      storeList.innerHTML = "<p>Sorry, no nearby stores found.</p> <a class='nostrore_online' target='_blank' href='https://www.elietahari.com/a/return'>Return Online.</a>";
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", function () {
+      const zipcode = document.getElementById("zipcode").value;
+      findNearbyStores(zipcode);
+    });
+  </script>
+
+  <!-- Add the Google Maps JavaScript API script here -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfqx__Gt-8ctfOyEWHUvPJHSLRDc0Mt5E&libraries=geometry&callback=initMap"></script>

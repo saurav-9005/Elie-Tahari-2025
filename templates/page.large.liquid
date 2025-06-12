@@ -1,0 +1,14 @@
+<div class="Container">
+  <header class="PageHeader">
+    <div class="SectionHeader SectionHeader--center">
+      <h1 class="SectionHeader__Heading Heading u-h1">{{ page.title }}</h1>
+    </div>
+    <script src="//maps.googleapis.com/maps/api/js?libraries=places&amp;key=AIzaSyAXZVsGgGJirVcDoTQEjwVYe48yXVaCpds"  type="text/javascript"></script>
+{{ 'ndnapps-storelocator.css' | asset_url | stylesheet_tag }}
+    <script src='{{ 'ndnapps-storelocator.js' | asset_url }}' defer='defer'></script>
+  </header>
+
+  <div class="PageContent Rte">
+    {{ page.content }}
+  </div>
+</div>

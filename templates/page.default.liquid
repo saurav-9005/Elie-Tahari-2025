@@ -1,0 +1,17 @@
+{{ page.content }}
+
+{% comment %}
+THIS STYLE IS ONLY FOR COLLECTION STORE PAGE 
+{% endcomment %}
+
+{% if template contains 'page' and page.url == '/pages/collection-stores' %}
+<style>
+  .sms-number {
+   top:0;
+   line-height:22px;
+   padding-top:10px; 
+  }
+</style>
+
+{% endif %}
+  

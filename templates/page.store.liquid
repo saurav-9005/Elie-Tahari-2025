@@ -1,0 +1,1216 @@
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+<style>
+   a:hover{
+   text-decoration: underline;
+   }
+   .sidebar {
+   position:absolute;
+   width:33.3333%;
+   height:100%;
+   top:0;left:0;
+   overflow:hidden;
+   border-right:1px solid rgba(0,0,0,0.25);
+   }
+   .pad2 {
+   padding:20px;
+   }
+   .store-locator-wrapper .map.mapboxgl-map, #map {
+   position:absolute;
+   left:33.3333%;
+   width:66.6666% !important;
+   top:0;bottom:0;
+   }
+   h1 {
+   font-size:22px;
+   margin:0;
+   font-weight:400;
+   line-height: 20px;
+   padding: 20px 2px;
+   }
+   a {
+   color:#404040;
+   text-decoration:none;
+   }
+   a:hover {
+   color:#101010;
+   }
+   .heading {
+   background:#10398F;
+   border-bottom:1px solid #eee;
+   min-height:60px;
+   line-height:60px;
+   padding:0 10px;
+   /* background-color: #10398F; */
+   color:#fff ;
+   }
+  
+   .listings {
+   height:100%;
+   overflow:auto;
+   padding-bottom:60px;
+   }
+   .listings .item {
+   display:block;
+   border-bottom:1px solid #eee;
+   padding:10px;
+   text-decoration:none;
+   }
+   .listings .item:nth-child(2n){
+   background-color: #f2f2f2;
+   }
+   .listings .item:last-child { border-bottom:none; }
+   .listings .item .title {
+   display:block;
+   color:#000;
+   font-weight:700;
+   font-size:18px;
+   }
+   .listings .item .title small { font-weight:400; }
+   .listings .item.active .title,
+   .listings .item .title:hover { color:#10398F; }
+   .listings .item.active {
+   background-color:#e8e6e6;
+   }
+   .item p {
+   font-size: 16px;
+   margin:0 0 7px 0;
+   }
+   .item a {
+   font-size: 16px;
+   width: 100%;
+   display: inline-block;
+   margin-bottom: 7px;
+   }
+   .item .direction{
+   border: 2px solid #10398f;
+   color: #000;
+   padding: 5px 10px;
+   border-radius: 9px;
+   width:auto;
+   }
+   p.address::before {
+   content: "";
+   background: url(https://cdn.shopify.com/s/files/1/0350/8997/3385/files/icons.png?v=1621968218) no-repeat;
+   width: 15px;
+   height: 14px;
+   display: inline-block;
+   position: relative;
+   top: 3px;
+   margin-right: 5px;
+   }
+   a.email::before {
+   content: "";
+   background: url(https://cdn.shopify.com/s/files/1/0350/8997/3385/files/icons.png?v=1621968218) 0 -26px no-repeat;
+   width: 15px;
+   height: 15px;
+   display: inline-block;
+   position: relative;
+   top: 3px;
+   margin-right: 5px;
+   }
+   a.phone::before {
+   content: "";
+   background: url(https://cdn.shopify.com/s/files/1/0350/8997/3385/files/icons.png?v=1621968218) 0 -53px no-repeat;
+   width: 15px;
+   height: 16px;
+   display: inline-block;
+   position: relative;
+   top: 3px;
+   margin-right: 5px;
+   }
+   p.tag::before {
+   content: "";
+   background: url(https://cdn.shopify.com/s/files/1/0350/8997/3385/files/icons.png?v=1621968218) 0 -84px no-repeat;
+   width: 15px;
+   height: 16px;
+   display: inline-block;
+   position: relative;
+   top: 3px;
+   margin-right: 5px;
+   }
+   ::-webkit-scrollbar {
+   width:3px;
+   height:3px;
+   border-left:0;
+   background:rgba(0,0,0,0.1);
+   }
+   ::-webkit-scrollbar-track {
+   background:none;
+   }
+   ::-webkit-scrollbar-thumb {
+   background:#10398F;
+   border-radius:0;
+   }
+   .marker {
+   border: none;
+   cursor: pointer;
+   height: 56px;
+   width: 56px;
+   background:url("https://cdn.shopify.com/s/files/1/0350/8997/3385/files/location-marker.png?v=1621968218") no-repeat;
+   }
+   .clearfix { display:block; }
+   .clearfix:after {
+   content:'.';
+   display:block;
+   height:0;
+   clear:both;
+   visibility:hidden;
+   }
+   /* Marker tweaks */
+   .mapboxgl-popup {
+   padding-bottom: 50px;
+   }
+   .mapboxgl-popup-close-button {
+   display:none;
+   }
+   .mapboxgl-popup-content {
+   font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+   padding:0 0 10px 0;
+   width:300px;
+   }
+   .mapboxgl-popup-content-wrapper {
+   padding:1%;
+   }
+   .mapboxgl-popup-content h3 {
+   background:#10398f;
+   color:#fff;
+   margin:0;
+   display:block;
+   padding:10px;
+   border-radius:3px 3px 0 0;
+   font-weight:700;
+   margin-top:-15px;
+   }
+   .mapboxgl-popup-content h4 {
+   margin:0;
+   display:block;
+   padding: 10px 10px 0 10px;
+   font-weight:400;
+   }
+   .mapboxgl-popup-content div {
+   padding:10px;
+   }
+   .mapboxgl-container .leaflet-marker-icon {
+   cursor:pointer;
+   }
+   .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+   margin-top: 15px;
+   }
+   .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+   border-bottom-color: #91c949;
+   }
+   .item .cd-popup-trigger {
+   width: auto;
+   background: #10398f;
+   margin-right: 9px;
+   color: #fff;
+   padding: 5px 10px;
+   border-radius: 9px;
+   border: 2px solid #10398f;
+   }
+   .mapboxgl-ctrl-bottom-right {
+   display:none;
+   }
+   /* -------------------------------- 
+   xpopup 
+   -------------------------------- */
+   .cd-popup {
+   position: fixed;
+   left: 0;
+   top: 0;
+   height: 100%;
+   width: 100%;
+   background-color: rgba(94, 110, 141, 0.9);
+   opacity: 0;
+   visibility: hidden;
+   -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+   -moz-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+   transition: opacity 0.3s 0s, visibility 0s 0.3s;
+   z-index:5;
+   }
+   .cd-popup.is-visible {
+   opacity: 1;
+   visibility: visible;
+   -webkit-transition: opacity 0.3s 0s, visibility 0s 0s;
+   -moz-transition: opacity 0.3s 0s, visibility 0s 0s;
+   transition: opacity 0.3s 0s, visibility 0s 0s;
+   z-index:11;
+   }
+   .cd-popup-container {
+   position: relative;
+   width: 100%;
+   height:100%;
+   background: #FFF;
+   border-radius: .25em .25em .4em .4em;
+   text-align: center;
+   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+   -webkit-transform: translatex(-400px);
+   -moz-transform: translatex(-400px);
+   -ms-transform: translatex(-400px);
+   -o-transform: translatex(-400px);
+   transform: translatex(-400px);
+   /* Force Hardware Acceleration in WebKit */
+   -webkit-backface-visibility: hidden;
+   -webkit-transition-property: -webkit-transform;
+   -moz-transition-property: -moz-transform;
+   transition-property: transform;
+   -webkit-transition-duration: 0.5s;
+   -moz-transition-duration: 0.5s;
+   transition-duration: 0.5s;
+   padding:20px;
+   }
+   .cd-popup-container p {
+   padding: 0px;
+   margin:0px;
+   }
+   .cd-popup-container .cd-popup-close {
+   position: absolute;
+   top: 8px;
+   right: 8px;
+   width: 30px;
+   height: 30px;
+   }
+   .cd-popup-container .cd-popup-close::before, .cd-popup-container .cd-popup-close::after {
+   content: '';
+   position: absolute;
+   top: 12px;
+   width: 14px;
+   height: 3px;
+   background-color: #000000;
+   }
+   .cd-popup-container .cd-popup-close::before {
+   -webkit-transform: rotate(45deg);
+   -moz-transform: rotate(45deg);
+   -ms-transform: rotate(45deg);
+   -o-transform: rotate(45deg);
+   transform: rotate(45deg);
+   left: 8px;
+   }
+   .cd-popup-container .cd-popup-close::after {
+   -webkit-transform: rotate(-45deg);
+   -moz-transform: rotate(-45deg);
+   -ms-transform: rotate(-45deg);
+   -o-transform: rotate(-45deg);
+   transform: rotate(-45deg);
+   right: 8px;
+   }
+   .is-visible .cd-popup-container {
+   -webkit-transform: translateX(0);
+   -moz-transform: translateX(0);
+   -ms-transform: translateX(0);
+   -o-transform: translateX(0);
+   transform: translateX(0);
+   }
+   .cd-popup .item a, .cd-popup .item p {
+   font-size: 20px;
+   line-height: 26px;
+   }
+   .hours {
+   display: flex;
+   justify-content: space-between;
+   }
+   .hours > div:first-child {
+   padding: 0 0 0 30px;
+   }
+   .hours > div:last-child {
+   padding: 0 30px 0 0;
+   }
+   .hours-box {
+   max-width: 45em;
+   background: #f2f2f2;
+   padding: 1em;
+   margin: 30px auto;
+   }
+   .hours-box ul:first-child li:first-child {
+   font-weight: bold;
+   color: #000;
+   }
+   .hours-box ul:last-child li:first-child {
+   cursor: pointer;
+   }
+   .hours-box ul {
+   margin: 0;
+   padding: 15px;
+   list-style: none;
+   }
+   .hours-box ul li {
+   color: #000;
+   font-size: 18px;
+   line-height: 39px;
+   }
+   .store-locator-wrapper{
+   height: 800px;
+   position: relative;
+   max-width: 1280px;
+   width: 100%;
+   margin: 50px auto;
+   }
+   .outlet-selected #listing-0, .outlet-selected #listing-1, .outlet-selected #listing-8, .outlet-selected #listing-9, .outlet-selected #listing-10  {
+   display:none; 
+   }
+   @media only screen and (max-width: 640px) {
+   .sidebar {
+   width:100%;
+   }
+   #map {
+   display:none;
+   }
+   .hours-box {
+   padding:0.3em;
+   }
+   .hours > div:first-child {
+   padding: 0 0 0 0px;
+   }
+   .hours > div:last-child {
+   padding: 0 0px 0 0;
+   }
+   }
+</style>
+<div class="store-locator-wrapper">
+   <div class="sidebar">
+      <div class="heading">
+         <h1>Store Lists</h1>
+      </div>
+      <div class="listings">
+         <ul id="listings"></ul>
+      </div>
+   </div>
+   <div id="map" class="map"></div>
+   <div id="listing0s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-1" role="dialog" aria-label="Elie Tahari Aventura">
+         <h2>Elie Tahari Aventura</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">19575 Biscayne Blvd Suite #1195, Aventura, FL, 33180, United States</p>
+                  <a href="mailto:etaventura@elietahari.com" class="email">etaventura@elietahari.com</a> <a href="tel:7866545749" class="phone">(786) 654-5749</a>
+                  <p class="tag">Collection</p>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">11:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+   <!-- cd-popup -->
+   <div id="listing1s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-2" role="dialog" aria-label="Elie Tahari Fashion Island">
+         <h2>Elie Tahari Fashion Island</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">231 Newport Center Dr, Newport Beach, CA, 92660, United States</p>
+                  <a href="mailto:etfashionisland@elietahari.com" class="email">etfashionisland@elietahari.com</a> <a href="tel:9492587933" class="phone">(949) 258-7933</a>
+                  <p class="tag">Collection</p>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">10:00am to 7:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">10:00am to 7:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">10:00am to 7:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">10:00am to 7:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">11:00am to 6:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+  
+  <!-- cd-popup -->
+   <div id="listing3s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-3" role="dialog" aria-label="Elie Tahari Palm Beach">
+         <h2>Elie Tahari Palm Beach Gardens</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">3101 PGA Blvd Suite Q-231, Palm Beach Garden, FL, 33410, United States</p>
+                  <a href="mailto:etaventura@elietahari.com" class="email">@elietahari.com</a> <a href="tel:2022347336" class="phone">(561) 247-7469</a>
+                  <p class="tag">Collection</p>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">12:00pm to 6:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>   
+   
+   <div id="listing4s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-6" role="dialog" aria-label="Elie Tahari National Harbor">
+         <h2>Elie Tahari National Harbor</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">6800 Oxon Hill Rd #835, Oxon Hill, MD, 20745, United States</p>
+                  <a href="mailto:etnationalharbor@elietahari.com" class="email">etnationalharbor@elietahari.com</a> <a href="tel:3017491480" class="phone">(301) 749-1480</a>
+                  <p class="tag">Outlet</p>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">10:00am to 9:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">11:00am to 7:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+   <!-- cd-popup -->
+   <div id="listing5s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-7" role="dialog" aria-label="Elie Tahari Pembroke Gardens">
+         <h2>Elie Tahari Pembroke Gardens</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">427 SW 145th Terrace, Pembroke Pines, FL, 33027, United States</p>
+                  <a href="mailto:etpembroke@elietahari.com" class="email">etpembroke@elietahari.com</a> <a href="tel:3017491480" class="phone">(301) 749-1480</a>
+                  <p class="tag">Outlet</p>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">11:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">11:00am to 6:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+   
+  
+  <!-- cd-popup -->
+   <div id="listing6s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-10" role="dialog" aria-label="Elie Tahari Garden State Plaza">
+         <h2>Elie Tahari Garden State Plaza</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">One Garden State Plaza, Paramus, NJ 07652</p>
+                  <a href="mailto:etgardenstate@elietahari.com" class="email">etgardenstate@elietahari.com</a> <a href="tel:8565322065" class="phone">(856) 532-2065</a>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                            <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                            <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">10:00am to 9:30pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">Closed</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+   <!-- cd-popup -->
+  <!-- cd-popup -->
+   <div id="listing7s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-11" role="dialog" aria-label="Elie Tahari Santa Monica Place">
+         <h2>Elie Tahari Santa Monica Place</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">395 Santa Monica PL, Santa Monica, CA 90401</p>
+                  <a href="mailto:etsantamonica@elietahari.com" class="email">etsantamonica@elietahari.com</a> 
+                 <a href="tel:4245811526" class="phone">(424) 581-1526</a>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">10:00am to 8:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">11:00am to 7:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>
+   <!-- cd-popup -->
+   <!-- cd-popup -->
+   <!--<div id="listing8s" class="cd-popup" role="alert">
+      <div class="cd-popup-container" id="each-store-12" role="dialog" aria-label="Elie Tahari Citadel">
+         <h2>Elie Tahari Citadel</h2>
+         <div class="store-information">
+            <div class="address">
+               <div class="item">
+                  <p class="address">100 Citadel Dr Space, 608 Commerce CA 90040</p>
+                  <a href="milto:etcitadel@elietahari.com" class="email">etcitadel@elietahari.com</a> 
+                 <a href="tel:3234907306" class="phone">323-490-7306</a>
+               </div>
+               <button type="button" aria-label="close button" class="cd-popup-close"></button>
+            </div>
+            <div class="hours-box">
+               <div class="hours">
+                  <table style="width: 100%;">
+                     <tbody>
+                        <tr>
+                           <th tabindex="0">Opens</th>
+                           <th tabindex="0">Hours</th>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Monday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Tuesday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Wednesday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Thursday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Friday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Saturday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                        <tr>
+                           <td tabindex="0">Sunday</td>
+                           <td tabindex="0">09:00am to 10:00pm</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- cd-popup-container -->
+   </div>-->
+   <!-- cd-popup -->
+   <script>// <![CDATA[
+      // This will let you use the .remove() function later on
+          if (!('remove' in Element.prototype)) {
+            Element.prototype.remove = function() {
+              if (this.parentNode) {
+                  this.parentNode.removeChild(this);
+              }
+            };
+          }
+        
+          mapboxgl.accessToken = 'pk.eyJ1Ijoic2F1cmF2OTAwNSIsImEiOiJja3AyeDZqcWUwMGlmMm9wNXNjOGo3Y3Z6In0._n4luDl7saY0q-4nj-bRQA';
+        
+          // This adds the map
+          var map = new mapboxgl.Map({
+            // container id specified in the HTML
+            container: 'map',
+            // style URL
+            style: 'mapbox://styles/mapbox/streets-v11',
+            // initial position in [long, lat] format
+            center: [-97.989210, 29.823470],
+            // initial zoom
+            zoom: 3,
+            scrollZoom: false
+          });
+        
+          var stores = {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    -80.143080,
+                    25.957750
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Aventura",
+                  "phoneFormatted": "(786) 654-5749",
+                  "phone": "7866545749",
+                  "address": "19575 Biscayne Blvd Suite #1195, Aventura, FL, 33180, United States",
+                  "type": "Collection",
+                  "email": "etaventura@elietahari.com"           
+                }
+              },{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -117.872550,
+                  33.616910
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Fashion Island",
+                  "phoneFormatted": "(949) 258-7933",
+                  "phone": "9492587933",
+                  "address": "231 Newport Center Dr, Newport Beach, CA, 92660, United States",
+                  "type": "Collection",
+                  "email": "etfashionisland@elietahari.com"           
+                }
+              },{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -80.085517,
+                  26.848587
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Palm Beach Gardens",
+                  "phoneFormatted": "(561) 247-7469",
+                  "phone": "5612477469",
+                  "address": "3101 PGA Blvd Suite Q-231, Palm Beach Garden, FL, 33410, United States",
+                  "type": "Collection",
+                  "email": ""           
+                }
+              },{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -77.001110,
+                  38.795800
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari National Harbor",
+                  "phoneFormatted": "(301) 749-1480",
+                  "phone": "3017491480",
+                  "address": "6800 Oxon Hill Rd #835, Oxon Hill, MD, 20745, United States",
+                  "type": "Outlet",
+                  "email": "etnationalharbor@elietahari.com"           
+                }
+              },{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -80.357246,
+                  25.993094
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Pembroke Gardens",
+                  "phoneFormatted": "(954) 589-1399",
+                  "phone": "9545891399",
+                  "address": "427 145th Terrace Suite 4040 Pembroke Pines FL 33027",
+                  "type": "Outlet",
+                  "email": "etpembroke@elietahari.com"           
+                }
+              }, {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -74.07571123331115,
+                  40.92358845143634
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Garden State Plaza",
+                  "phoneFormatted": "(856) 532-2065",
+                  "phone": "8565322065",
+                  "address": "One Garden State Plaza, Paramus, NJ 07652",
+                  "type": "Collection",
+                  "email": "etgardenstate@elietahari.com"           
+                }
+              }, {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                  -118.68671999632573,
+                  35.10369285111498
+                  ]
+                },
+                "properties": {
+                  "name": "Elie Tahari Santa Monica Place",
+                  "phoneFormatted": "(424)-581-1526",
+                  "phone": "4245811526",
+                  "address": "395 Santa Monica PL, Santa Monica, CA 90401",
+                  "type": "Collection",
+                  "email": "etsantamonica@elietahari.com"           
+                }
+              }]
+            };
+          // This adds the data to the map
+          map.on('load', function (e) {
+            // This is where your '.addLayer()' used to be, instead add only the source without styling a layer
+            map.addSource("places", {
+              "type": "geojson",
+              "data": stores
+            });
+            // Initialize the list
+            buildLocationList(stores);
+        
+          });
+        
+          // This is where your interactions with the symbol layer used to be
+          // Now you have interactions with DOM markers instead
+          stores.features.forEach(function(marker, i) {
+            // Create an img element for the marker
+            var el = document.createElement('div');
+            el.id = "marker-" + i;
+            el.className = 'marker';
+            el.tabIndex= '0';
+            // Add markers to the map at all points
+            new mapboxgl.Marker(el, {offset: [0, -23]})
+                .setLngLat(marker.geometry.coordinates)
+                .addTo(map);
+        
+            el.addEventListener('click', function(e){
+                // 1. Fly to the point         
+                flyToStore(marker);       
+               
+      
+        
+                // 2. Close all other popups and display popup for clicked store
+                createPopUp(marker);
+        
+                // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+                var activeItem = document.getElementsByClassName('active');
+        
+                e.stopPropagation();
+                if (activeItem[0]) {
+                   activeItem[0].classList.remove('active');
+                }
+        
+                var listing = document.getElementById('listing-' + i);
+                listing.classList.add('active');
+        
+            });
+      
+            el.addEventListener('keyup', function(e){
+                if (e.keyCode === 13){
+                  // 1. Fly to the point         
+                flyToStore(marker);       
+               
+      
+        
+                // 2. Close all other popups and display popup for clicked store
+                createPopUp(marker);
+        
+                // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+                var activeItem = document.getElementsByClassName('active');
+        
+                e.stopPropagation();
+                if (activeItem[0]) {
+                   activeItem[0].classList.remove('active');
+                }
+        
+                var listing = document.getElementById('listing-' + i);
+                listing.classList.add('active');
+                }
+                
+            })
+      
+          });
+        
+        
+          function flyToStore(currentFeature) {
+            map.flyTo({
+                center: currentFeature.geometry.coordinates,
+                zoom: 15
+              });
+          }
+        
+          function createPopUp(currentFeature) {
+            var popUps = document.getElementsByClassName('mapboxgl-popup');
+            if (popUps[0]) popUps[0].remove();
+        
+        
+            var popup = new mapboxgl.Popup({closeOnClick: false})
+                  .setLngLat(currentFeature.geometry.coordinates)
+                  .setHTML('<h3 aria-live="polite">' + currentFeature.properties.name + '</h3>' +
+                    '<h4 aria-live="polite">' + currentFeature.properties.address + '</h4>' + '<h4 aria-live="polite">' + currentFeature.properties.email + '</h4>' 
+                    + '<h4 aria-live="polite">' + currentFeature.properties.phoneFormatted + '</h4>'
+                    )
+                  .addTo(map);
+          }
+        
+          function buildLocationList(data) {
+            for (i = 0; i < data.features.length; i++) {
+              var currentFeature = data.features[i];
+              var prop = currentFeature.properties;
+        
+              var listings = document.getElementById('listings');
+              var listing = listings.appendChild(document.createElement('li'));
+              listing.className = 'item';
+              listing.id = "listing-" + i;
+      listing.tabIndex= "0";
+              
+      
+              
+        
+              var link = listing.appendChild(document.createElement('a'));
+              link.href = '#';
+              link.className = 'title';
+              link.ariaLabel = 'Store ' + prop.name;
+              link.dataPosition = i;
+              link.innerHTML = prop.name;
+        
+              var address = listing.appendChild(document.createElement('p'));
+                     
+              address.className = 'address';
+              address.innerHTML = prop.address;
+      
+              var email = listing.appendChild(document.createElement('a'));
+              email.href = 'mailto:' + prop.email;
+              email.ariaLabel  = prop.name + " store email address"
+              email.innerHTML = prop.email;
+              email.className = 'email';
+      
+              var phone = listing.appendChild(document.createElement('a'));
+              phone.href = 'tel:' + prop.phone;
+              phone.ariaLabel = prop.name + " Store Phone Number"
+              phone.className = 'phone';
+              phone.innerHTML = prop.phoneFormatted;
+              if (prop.type) {
+              var tags = listing.appendChild(document.createElement('p'));
+             
+              tags.className = 'tag';
+              tags.innerHTML = prop.type;
+              }
+              var details = listing.appendChild(document.createElement('a'));
+              details.href = '#0';
+              details.className = 'cd-popup-trigger';
+              details.id = listing.id + 's'; 
+              const str = details.id;
+             const myid = str.replace('-','');
+             //console.log(myid)
+              details.onclick = function(){            
+                  openpopup(myid)
+                  
+              };
+              details.innerHTML = 'View Hours';
+              details.ariaLabel = prop.name + ' Store opening Hours';
+      
+              var direction = listing.appendChild(document.createElement('a'));
+              direction.href = 'https://maps.google.com/?daddr=' + prop.address;
+              direction.target="_blank"
+              direction.className = 'direction';
+              direction.innerHTML = 'Get Directions';
+              direction.ariaLabel = prop.name + 'view the location in Google Map';
+      
+             
+              // if (prop.phone) {
+              //   details.innerHTML += ' &middot; ' + prop.phoneFormatted;
+              // }
+        
+        
+        
+              link.addEventListener('click', function(e){
+                // Update the currentFeature to the store associated with the clicked link
+                var clickedListing = data.features[this.dataPosition];
+                  
+                  //console.log(clickedListing)
+        
+                // 1. Fly to the point
+                flyToStore(clickedListing);
+        
+                // 2. Close all other popups and display popup for clicked store
+                createPopUp(clickedListing);
+        
+                // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+                var activeItem = document.getElementsByClassName('active');
+        
+                if (activeItem[0]) {
+                   activeItem[0].classList.remove('active');
+                }
+                this.parentNode.classList.add('active');
+        
+              });
+              jQuery(document).ready(function($){
+      	
+      	//close popup
+      	$('.cd-popup').on('click', function(event){
+      		if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') ) {
+      			event.preventDefault();
+      			$(this).removeClass('is-visible');
+      		}
+      	});
+      	//close popup when clicking the esc keyboard button
+      	$(document).keyup(function(event){
+          	if(event.which=='27'){
+          		$('.cd-popup').removeClass('is-visible');
+      	    }
+          });
+      });
+      
+      //open popup
+      function openpopup() {
+          event.preventDefault();
+          	$("#"+myid+"").addClass('is-visible');
+      }
+            }
+      
+          }
+        
+        
+        if (window.location.hash.split('-')[0] == '#outlet') {
+          //console.log("I am here");
+          //location.reload();
+          $('.store-locator-wrapper').addClass('outlet-selected')
+          //$('ul.side').addClass('hashed');
+      }
+
+    
+   </script>
+</div>
+
+{%- comment -%}{{ page.content }}{%- endcomment -%}
