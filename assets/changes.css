@@ -1,0 +1,71 @@
+/** adding a logo side to navigation **/
+
+.template-index {
+  max-width:1920px;
+  width:100%;
+  margin:0 auto;
+}
+
+.CollectionMain .CollectionToolbar--top {
+    z-index: 2;
+    top: 65px;
+}
+
+.ProductItem__LabelList .ProductItem__Label--onSale {
+    left: 13px;
+    padding: 1px 6px;
+    background: #ffffff1f;
+    position: absolute;
+    font-size: 10px!important;
+    z-index: 1;
+    border: 1px solid #00000026;
+    letter-spacing: 0.08em;
+}
+
+.ProductItem .ProductItem__Title {
+    /* height: 48px; */
+    font-size: 13px;
+    letter-spacing: 0.1em;
+}
+
+p.dressevent {
+    text-align: center;
+    font-weight: 100;
+    background: #db005842;
+    font-size: 12px;
+    color: #000000;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    position: relative;
+    padding: 1% 0;
+    border: 1px solid #db005842;
+}
+
+.ProductItem .ProductItem__PriceList {
+    /* height: 50px; */
+    /* font-weight: 700; */
+    letter-spacing: 0.1em;
+    font-size: 13px;
+}
+
+.ProductItem__Info {
+    margin-top: 10px;
+}
+
+#shopify-section-160519067988801478, #shopify-section-16039241654f99823d, #shopify-section-1662582115f563c214  {  
+  max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/*#shopify-section-1586357429157, #shopify-section-16306779332641a3fe, #shopify-section-slideshow {
+  max-width:1350px;
+  width:100%;
+  margin:0 auto;
+}
+
+#shopify-section-slideshow {
+margin-top:2em;
+}
+*/

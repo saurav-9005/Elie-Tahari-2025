@@ -1,0 +1,846 @@
+<!doctype html>
+
+<html class="no-js" lang="{{ shop.locale }}">
+  <head>
+     <!-- Google Consent Mode V2 Consentmo -->
+{% render 'gcm-integration-script' %}
+    {% render 'gsf-conversion-pixels' %}
+    {% comment %}{% include 'GTM-body' %}
+    {% include 'elevar-head' %}{% endcomment %}
+    <meta name="facebook-domain-verification" content="bys8j3qodafymm5yxixmi3hkfm8zgx" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height">
+    <meta name="google-site-verification" content="tu1q6T1MI77rXrWkZ-4XZfJPa5PI62WbOGmh-q2ry9U">
+    <meta name="theme-color" content="{{ settings.accent_color }}">
+<script>(function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"17536802", enableAutoSpaTracking: true};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");</script>
+    <link rel="stylesheet" href="https://use.typekit.net/wmx4wbb.css">
+    <title>
+      {{ page_title }}
+      {% if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+      {%- endif %}
+      {% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x' }}" type="image/png">
+    {%- endif -%}
+
+    {% render 'social-meta-tags' %}
+    
+     {% if request.path contains '/404' %}
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      // Mark 404 pageviews as “internal” so your GA4 filter can drop them
+      window.dataLayer.push({ 'traffic_type': 'internal' });
+    </script>
+  {% endif %}
+
+   
+
+    {{ content_for_header }}
+
+    <link rel="stylesheet" href="{{ 'theme.scss.css' | asset_url }}">
+    <!-- SLICK SLIDER CSS -->
+     <link rel="stylesheet" href="{{ 'slick.css' | asset_url }}">
+     <link rel="stylesheet" href="{{ 'slick-theme.css' | asset_url }}">
+
+
+    <!-- THIS IS MY CUSTOM CSS -->
+    <link rel="stylesheet" href="{{ 'theme-custom.css' | asset_url }}">
+    <!-- END NEW CODE -->
+
+    {% comment %}
+      <link rel="stylesheet" href="{{ 'gotham_sub.css' | asset_url }}">
+    {% endcomment %}
+
+    <script>
+      // This allows to expose several variables to the global scope, to be used in scripts
+      window.theme = {
+        pageType: {{ request.page_type | json }},
+        moneyFormat: {{ shop.money_format | json }},
+        moneyWithCurrencyFormat: {{ shop.money_with_currency_format | json }},
+        productImageSize: {{ settings.product_image_size | json }},
+        searchMode: {{ settings.search_mode | json }},
+        showPageTransition: {{ settings.show_page_transition | json }},
+        showElementStaggering: {{ settings.show_element_staggering | json }},
+        showImageZooming: {{ settings.show_image_zooming | json }}
+      };
+
+      window.routes = {
+        rootUrl: {{ routes.root_url | json }},
+        cartUrl: {{ routes.cart_url | json }},
+        cartAddUrl: {{ routes.cart_add_url | json }},
+        cartChangeUrl: {{ routes.cart_change_url | json }},
+        searchUrl: {{ routes.search_url | json }},
+        productRecommendationsUrl: {{ routes.product_recommendations_url | json }}
+      };
+
+      window.languages = {
+        cartAddNote: {{ 'cart.general.add_note' | t | json }},
+        cartEditNote: {{ 'cart.general.edit_note' | t | json }},
+        productImageLoadingError: {{ 'product.slideshow.image_loading_error' | t | json }},
+        productFormAddToCart: {% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | json }}{% else %}{{ 'product.form.add_to_cart' | t | json }}{% endif %},
+        productFormUnavailable: {{ 'product.form.unavailable' | t | json }},
+        productFormSoldOut: {{ 'product.form.sold_out' | t | json }},
+        shippingEstimatorOneResult: {{ 'cart.shipping_estimator.one_result_title' | t | json }},
+        shippingEstimatorMoreResults: {{ 'cart.shipping_estimator.more_results_title' | t | json }},
+        shippingEstimatorNoResults: {{ 'cart.shipping_estimator.no_results_title' | t | json }}
+      };
+
+      window.lazySizesConfig = {
+        loadHidden: false,
+        hFac: 0.5,
+        expFactor: 2,
+        ricTimeout: 150,
+        lazyClass: 'Image--lazyLoad',
+        loadingClass: 'Image--lazyLoading',
+        loadedClass: 'Image--lazyLoaded'
+      };
+
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      document.documentElement.style.setProperty('--window-height', window.innerHeight + 'px');
+
+      // We do a quick detection of some features (we could use Modernizr but for so little...)
+      (function() {
+        document.documentElement.className += ((window.CSS && window.CSS.supports('(position: sticky) or (position: -webkit-sticky)')) ? ' supports-sticky' : ' no-supports-sticky');
+        document.documentElement.className += (window.matchMedia('(-moz-touch-enabled: 1), (hover: none)')).matches ? ' no-supports-hover' : ' supports-hover';
+      }());
+    </script>
+
+    <script src="{{ 'lazysizes.min.js' | asset_url }}" async></script>
+
+    {%- if template == 'customers/addresses' -%}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+      <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+    {%- endif -%}
+
+    
+    <script src="{{ 'libs.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+
+    <script>
+      (function () {
+        window.onpageshow = function() {
+          if (window.theme.showPageTransition) {
+            var pageTransition = document.querySelector('.PageTransition');
+
+            if (pageTransition) {
+              pageTransition.style.visibility = 'visible';
+              pageTransition.style.opacity = '0';
+            }
+          }
+
+          // When the page is loaded from the cache, we have to reload the cart content
+          document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true
+          }));
+        };
+      })();
+    </script>
+
+   
+
+    <!-- begin-boost-pfs-filter-css -->
+    {% include 'boost-pfs-style' %}
+    <!-- end-boost-pfs-filter-css -->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    {% if localization.country.iso_code == 'US' %}
+      <script>
+        console.log('USA');
+      </script>
+    {% else %}
+      {%- render 'asl_snippet' -%}
+
+      {% if template == 'product' %}
+        <script>
+            window.asl_loaded = function(){
+          var variant = window.asl_variants;
+            var region = asl_country_region();
+               if (region.name = 'International'){
+              var result = Object.keys(variant).map(e =>({size:e, qty:variant[e]}));
+              console.log(result);
+               }
+              var product_size = document.body.getElementsByClassName("SizeSwatch");
+              console.log(product_size)
+              for (var i = 0; i < result.length; i++) {
+                var str = result[i].size;
+                var qty = result[i].qty
+                var size = str.split('/ ')[1];
+                 for (var j = 0; j < product_size.length; j++) {
+              pdpSize = product_size[j].textContent;
+                console.log(pdpSize)
+                   if (size == pdpSize && qty == 0) {
+                     product_size[j].parentNode.classList.add("outofstock");
+                }else if (size == pdpSize && qty != 0){
+                  }
+                }else{
+
+                }
+            }
+
+              }
+
+            }
+        </script>
+      {% endif %}
+    {% endif %}
+
+    
+    <!--<script>
+      console.log(window.location.pathname);
+      window.addEventListener('DOMContentLoaded', function() {
+    // Function to extract URL parameters
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(window.location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Get the utm_source parameter
+    var utmSource = getUrlParameter('utm_source');
+    // Check if utm_source is 'google'
+    if (utmSource.toLowerCase() === 'google') {
+        // Discount code to apply
+        var discountCode = 'FRIENDS25';
+        // Capture the landing page path
+        var landingPagePath = window.location.pathname;
+      
+        // Build the redirection URL with the captured landing page path
+        var redirectURL = 'https://www.elietahari.com/discount/' + discountCode + '?redirect=' + encodeURIComponent(landingPagePath);
+        // Redirect the user to the constructed URL
+        window.location.href = redirectURL;
+    }
+});
+    </script>-->
+
+
+   
+    <script>
+var CRL8_SITENAME = 'elietahari-xh4bww'; !function(){var e=window.crl8=window.crl8||{},n=!1,i=[];e.ready=function(e){n?e():i.push(e)},e.pixel=e.pixel||function(){e.pixel.q.push(arguments)},e.pixel.q=e.pixel.q||[];var t=window.document,o=t.createElement("script"),c=e.debug||-1!==t.location.search.indexOf("crl8-debug=true")?"js":"min.js";o.async=!0,o.src=t.location.protocol+"//edge.curalate.com/sites/"+CRL8_SITENAME+"/site/latest/site."+c,o.onload=function(){n=!0,i.forEach(function(e){e()})};var r=t.getElementsByTagName("script")[0];r.parentNode.insertBefore(o,r.nextSibling)}();
+</script>
+  </head>
+
+  <body class="prestige--v4 {% if template.directory %}template-{{ template.directory | handle }}{% endif %} template-{{ template.name | handle }} template-{{ collection.title | handle }} {% if template == 'page.Anniversary' %}template-Anniversary{% endif %}">
+    <a aria-label="Skip to main content" class="PageSkipLink u-visually-hidden" href="#main">
+      {{- 'header.navigation.skip_to_content' | t -}}
+    </a>
+    <span class="LoadingBar"></span>
+    <div class="PageOverlay"></div>
+    <div class="PageTransition"></div>
+
+    {% if template == 'page.outlet' %}
+      {% section 'popup' %}
+    {%- endif -%}
+
+    {% section 'sidebar-menu' %}
+    {% section 'woet-sidebar-menu' %}
+
+    {%- if template != 'cart' -%}
+      {% render 'cart-drawer' %}
+    {%- endif -%}
+     {% section 'announcement' %}
+    <div class="PageContainer">
+      {% comment %}{% section 'announcement' %} {% endcomment %}
+      {% section 'header' %}
+      {% section 'woet-header' %}
+
+      <main id="main" role="main">        
+        {{ content_for_layout }}
+      </main>
+
+      {% section 'footer' %}
+    </div>
+
+    <!-- begin-boost-pfs-js -->
+    {% include 'boost-pfs' %}
+    <!-- end-boost-pfs-js -->
+    <script src="{{'slick.min.js' | asset_url}}" ></script>
+
+    
+    <script>
+      $(document).ready(function(){
+        var scrollTop = 0;
+        $(window).scroll(function(){
+          scrollTop = $(window).scrollTop();
+
+          if (scrollTop >= 1) {
+            $('#shopify-section-header').addClass('scrolled-nav');
+            $('#shopify-section-woet-header').addClass('scrolled-nav');
+          } else if (scrollTop < 1) {
+            $('#shopify-section-header').removeClass('scrolled-nav');
+            $('#shopify-section-woet-header').removeClass('scrolled-nav');
+          }
+
+        });
+
+      });
+    </script>
+
+   
+
+    <script type="text/javascript">
+            // start outlet
+            var currenturl = window.location.href;
+
+// Check if the URL is the specific page
+if (currenturl.includes("https://www.elietahari.com/pages/world-of-elie-tahari")) {
+    const url = new URL(currenturl);
+    
+    // Check if `srsltid` exists in the URL
+    if (url.searchParams.has('srsltid')) {
+        // Append `style=woet` to the existing parameters
+        url.searchParams.append('style', 'woet');
+    } else {
+        // If `srsltid` does not exist, add `style=woet`
+        url.searchParams.set('style', 'woet');
+    }
+    
+    // Replace the current URL without reloading the page
+    window.history.replaceState(null, null, url.href);
+}
+      var validUrls = [
+  "https://www.elietahari.com/collections/t-tahari-collection",
+  "https://www.elietahari.com/collections/t-tahari-dresses",
+  "https://www.elietahari.com/collections/t-tahari-tops",
+  "https://www.elietahari.com/collections/t-tahari-knits-sweaters",
+  "https://www.elietahari.com/collections/t-tahari-jackets-blazers",
+  "https://www.elietahari.com/collections/t-tahari-pants",
+  "https://www.elietahari.com/collections/tahari-denim",
+  "https://www.elietahari.com/collections/tahari-coats",
+  "https://www.elietahari.com/collections/tahari-handbags",
+  "https://www.elietahari.com/collections/tahari-fragrance",
+  "https://www.elietahari.com/collections/winter-accessories",
+  "https://www.elietahari.com/collections/tahari-home",
+  "https://www.elietahari.com/collections/outlet-accessories",
+  "https://www.elietahari.com/collections/outlet-dresses",
+  "https://www.elietahari.com/collections/outlet-tops",
+  "https://www.elietahari.com/collections/outlet-knit",
+  "https://www.elietahari.com/collections/outlet-sweaters",
+  "https://www.elietahari.com/collections/outlet-jackets-blazers",
+  "https://www.elietahari.com/collections/outlet-bottoms",
+  "https://www.elietahari.com/collections/outlet-coats",
+  "https://www.elietahari.com/collections/elie-tahari-outlet",
+  "https://www.elietahari.com/pages/world-of-elie-tahari",
+];
+
+// Check if currenturl exists in the array
+if (validUrls.includes(currenturl)) {
+  window.history.replaceState(null, null, "?style=woet");
+}
+
+              if(currenturl === "https://www.elietahari.com/collections/outlet-accessories?style=woet&pf_pt_category=Sunglasses"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Sunglasses");
+              }else if (document.referrer.indexOf("style=woet") > -1) {
+
+                window.history.replaceState(null, null, "?style=woet"); 
+
+              }
+
+            if(currenturl === "https://www.elietahari.com/collections/outlet-accessories?style=woet&pf_pt_category=Fragrance"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Fragrance");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-outlet"){
+
+                	window.history.replaceState(null, null, "?style=woet");
+              }
+       if(currenturl === "https://www.elietahari.com/collections/outlet-sale"){
+
+                	window.history.replaceState(null, null, "?style=woet");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/outlet-accessories?style=woet&pf_pt_category=Hats&pf_pt_category=Gloves"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Hats&pf_pt_category=Gloves");
+              }
+            if(currenturl === "https://www.elietahari.com/collections/outlet-accessories?style=woet&pf_pt_category=Handbags"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Handbags");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Tops"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Tops");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Sweaters"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Sweaters");
+              }
+       if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Pants"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Pants");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Jackets"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Jackets");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Dresses"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Dresses");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/99-and-under-outlet?style=woet&pf_pt_category=Coats"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Coats");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Dresses"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Dresses");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Tops"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Tops");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Knits"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Knits");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Sweaters"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Sweaters");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Jackets"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Jackets");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Pants"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Pants");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/elie-tahari-collection?style=woet&pf_pt_category=Coats"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Coats");
+              }
+       if(currenturl === "https://www.elietahari.com/collections/friends-family-outlet?style=woet&pf_pt_category=Jackets"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Jackets");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/friends-family-outlet?style=woet&pf_pt_category=Tops"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Tops");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/friends-family-outlet?style=woet&pf_pt_category=Dresses"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Dresses");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/friends-family-outlet?style=woet&pf_pt_category=Pants"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Pants");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/tahari-home?style=woet&pf_pt_category=Sheets"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Sheets");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/tahari-home?style=woet&pf_pt_category=Pillows"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Pillows");
+              }
+       if(currenturl === "https://www.elietahari.com/collections/tahari-home?style=woet&pf_pt_category=Comforter+Sets"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Comforter+Sets");
+              }
+      if(currenturl === "https://www.elietahari.com/collections/tahari-home?style=woet&pf_pt_category=Blankets+%26+Throws"){
+
+                	window.history.replaceState(null, null, "?style=woet&pf_pt_category=Blankets+%26+Throws");
+              }
+
+              if(currenturl === "https://www.elietahari.com/"){
+
+                window.history.pushState({}, document.title, "/" + "");
+              };
+
+
+
+              //var prevUrl = document.referrer.indexOf("style=outlet") > -1;
+              //alert(prevUrl)
+              //window.history.replaceState(null, null, "?style=outlet");
+
+              var currentPage = window.location.href.indexOf("style=woet") > -1
+
+              if(currentPage === true){
+
+                document.body.classList.add("outlet");
+                document.getElementById("section-header").style.display = "none";
+                document.getElementById("shopify-section-announcement").style.display = "none";
+                 document.getElementById("shopify-section-sidebar-menu").style.display = "none";
+              }else{
+                document.getElementById("section-woet-header").style.display = "none";
+                document.getElementById("shopify-section-woet-sidebar-menu").style.display = "none";
+              }
+
+            //end outlet
+
+
+
+
+
+
+            $('.main-collap').each(function(){
+        var t= $(this).find('.u-h7').eq(0).addClass('firstchildclick');
+      });
+
+           $('.main-collap:nth-child(6)').each(function(){
+        var t= $(this).find('.u-h7').eq(1).addClass('firstchildclick');
+
+      });
+
+            $( document ).ready(function() {
+        $('.Header__Icon').click(function(){
+        	$('.firstchildclick').trigger('click');
+        })
+
+        $('#short-review').click(function(){
+          $('#review-section button').trigger('click');
+        })
+
+      });
+
+
+
+
+
+
+            $("#mobile-menu").click(function() {
+          document.getElementById('mobile-menu').setAttribute('aria-expanded', 'true');
+      });
+             $(".Drawer__Close").click(function() {
+          document.getElementById('mobile-menu').setAttribute('aria-expanded', 'false');
+      });
+
+
+         $(".CollectionToolbar__LayoutSwitch button.is-active").attr("aria-selected","true");
+
+      $(".CollectionToolbar__LayoutSwitch button").click(function(){
+          $('.CollectionToolbar__LayoutSwitch button').attr('aria-selected', function(index, attr){
+              return attr == 'true' ? 'false' : 'true';
+          });
+      });
+
+            $(document).ready(function(){
+      $(".ProductList.ProductList--carousel.Carousel").removeAttr("tabindex");
+
+
+      });
+
+            $(window).on('load', function() {
+              $(".noUi-handle-upper").attr("aria-label","Slide to set Max Price");
+              $(".noUi-handle-lower").attr("aria-label","Slide to set Min Price");
+              $(".boost-pfs-filter-button.boost-pfs-filter-option-title-heading").attr("aria-expanded","true");
+              $(".boost-pfs-filter-button.boost-pfs-filter-option-title-heading").click(function(){
+              	var el = document.querySelectorAll('.boost-pfs-filter-button.boost-pfs-filter-option-title-heading');
+                  for (var i = 0; i < el.length-3; i++) {
+                     var currentEl = el[i];
+                      $(this).attr("aria-expanded", function(index, attr){ 
+               			return attr == "true" ? "false" : "true";
+
+             			});
+
+
+                  }
+            	});
+            });
+      $(document).ready(function(){
+      $('.content-slider').slick({
+        infinite: true,
+        speed: 300,
+        slidesToShow: 1,
+        autoplay: true,
+  autoplaySpeed: 6000,
+      });
+    });
+    </script>
+
+ 
+<script>
+(function() {
+  // 1. On every page load, check if the param is present
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mom') === 'thirty') {
+    document.body.classList.add('mother');
+    // persist so that subsequent pages know
+    sessionStorage.setItem('isMother', 'true');
+  }
+  
+  // 2. If we’ve ever seen the flag, update all internal links
+  if (sessionStorage.getItem('isMother') === 'true') {
+    document.body.classList.add('mother');
+    document.querySelectorAll('a[href^="/"]').forEach(link => {
+      const url = new URL(link.href, window.location.origin);
+      if (url.searchParams.get('mom') !== 'thirty') {
+        url.searchParams.set('mom', 'thirty');
+        link.href = url.toString();
+      }
+    });
+    // Also update the current URL without reloading:
+    if (!params.get('mom')) {
+      params.set('mom', 'thirty');
+      history.replaceState(null, '', '?' + params.toString());
+    }
+  }
+})();
+
+    </script>
+
+{% comment %}{% if collection.handle == '25-off-collection' or collection.handle == 'outlet-extra-25'  %}
+      {% style %}
+           body.summer .SectionHeader__Heading.Heading.u-h1.boost-pfs-filter-collection-header::after {
+              content: '30% OFF Collection';
+              display: block;
+            }
+             body.summer .SectionHeader__Heading.Heading.u-h1.boost-pfs-filter-collection-header {
+                visibility: hidden;
+            }
+            body.summer .SectionHeader__Heading.Heading.u-h1.boost-pfs-filter-collection-header::after {
+                visibility: visible;
+            }
+        body.outlet.summer .SectionHeader__Heading.Heading.u-h1.boost-pfs-filter-collection-header::after{
+          width:150px;
+        }
+      {% endstyle %}
+{% endif %}{% endcomment %}
+
+    {% if collection.handle == 'dresses' %}
+      {% style %}
+        .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-product-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1{
+          display:none;
+        }
+      {% endstyle %}
+      {% elsif collection.handle == "coats" %}
+      {% style %}
+        
+        .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-shop-by-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1 {
+          display:none;
+        }
+          .boost-pfs-filter-tree-v .boost-pfs-filter-options-wrapper .boost-pfs-filter-option:nth-child(2) {
+          border-top:none;
+        }
+      {% endstyle %}
+      {% elsif collection.handle == "all" %}
+       {% style %}
+         .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-tag.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1.boost-pfs-filter-option-collapsed {
+          display:inline-block;
+        }
+          .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-product-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1{
+          display:none;
+        }
+        .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-shop-by-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1:nth-child(1) {
+          display:none;
+        }
+      {% endstyle %}
+    {% else %}
+      {% style %}
+         .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-product-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1{
+          display:none;
+        }
+        .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-shop-by-type.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1:nth-child(1) {
+          display:none;
+        }
+        .boost-pfs-filter-option.boost-pfs-filter-option-list.boost-pfs-filter-option-tag.boost-pfs-filter-has-scrollbar.boost-pfs-filter-option-column-1.boost-pfs-filter-option-collapsed {
+          display:none;
+        }
+          .boost-pfs-filter-tree-v .boost-pfs-filter-options-wrapper .boost-pfs-filter-option:nth-child(2) {
+          border-top:none;
+        }
+      {% endstyle %}
+    {% endif %}
+
+    {% if template == "page.Anniversary" %}
+  <style>
+    body {
+    background-image:url(https://cdn.shopify.com/s/files/1/0456/0394/6705/files/NYC_Background_F.jpg?v=1724257552);    
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+  </style>
+{% endif %}
+
+    <script>
+            {% if template == "product" %}
+
+      const links = document.querySelectorAll('.copy-click');
+      const cls = {
+        copied: 'is-copied',
+        hover: 'is-hovered'
+      }
+
+      const copyToClipboard = str => {
+        const el = document.createElement('input');
+        str.dataset.copyString ? el.value = str.dataset.copyString : el.value = str.text;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.opacity = 0;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+
+      const clickInteraction = (e) => {
+        e.preventDefault();
+        copyToClipboard(e.target);
+        e.target.classList.add(cls.copied);
+        setTimeout(() => e.target.classList.remove(cls.copied), 1000);
+        setTimeout(() => e.target.classList.remove(cls.hover), 700);
+      }
+
+      Array.from(links).forEach(link => {
+        link.addEventListener('click', e => clickInteraction(e));
+        link.addEventListener('keypress', e => {
+          if (e.keyCode === 13) clickInteraction(e);
+        });
+        link.addEventListener('mouseover', e => e.target.classList.add(cls.hover));
+        link.addEventListener('mouseleave', e => {
+          if (!e.target.classList.contains(cls.copied)) {
+           e.target.classList.remove(cls.hover);
+          }
+        });
+      });
+
+            {% endif %}
+    </script>
+    <script>
+        {% if template == "product" %}
+        var product = {{product | json}};
+        var variants = {{product.variants | json}};
+        var i;
+        var outofstock = document.getElementsByClassName('size--swatch')
+        for ( i = 0; i < variants.length; i++){
+          var Inventory = variants[i].available;
+          if (Inventory == false ){
+            //console.log(Inventory);
+            outofstock[i].classList.add("outofstock");
+            //console.log(outofstock)
+          }
+        }
+          $("#short-review").click(function() {
+          $([document.documentElement, document.body]).animate({
+              scrollTop: $("#review-section").offset().top
+          }, 3000,
+          	$("#btn-click").click(),1000,  $("#shopify-product-reviews .spr-summary-actions-newreview").click(),1000
+          );
+
+          //$("#btn-click").click();
+      });
+        {% endif %}
+    </script>
+
+    <script>
+      {% if template == "product" %}
+            if($(".ColorSwatchList.HorizontalList li").next().length > 0) {
+
+              // ".size--swatch" ).removeClass( "outofstock" ).addClass( "no );
+              $('.size--swatch').closest('.ProductForm__Variants').addClass('pointer');
+
+      }
+             {% endif %}
+    </script>
+    
+<script>
+$(document).ready(function() {
+  var mobileMenuButton = $("#mobile-menu1");
+  var sidebarMenu = $("#sidebar-menu1");
+  var closeDrawerButton = $(".Drawer_Woet");
+
+  mobileMenuButton.on("click touchstart", function(event) {
+    event.preventDefault(); // Prevent default click behavior
+    sidebarMenu.attr("aria-hidden", sidebarMenu.attr("aria-hidden") === "true" ? "false" : "true");
+    $('.PageOverlay').addClass('is-visible');
+    $("html").addClass("no-scroll");
+  });
+
+  closeDrawerButton.on("click touchstart", function(event) {
+    event.preventDefault(); // Prevent default click behavior
+    $("html").removeClass("no-scroll");
+    sidebarMenu.attr("aria-hidden", "true");
+    $('.PageOverlay').removeClass('is-visible');
+  });
+});
+</script>
+    {% comment %}{% if content_for_header contains 'product_label' %}{% include 'bss-product-label-js' %}{% endif %}{% endcomment %}
+
+    <!-- CRITEO START -->
+    {% include 'criteo-tracking' %}
+    <!-- CRITEO END -->
+
+    <!-- Gorgias Chat Widget Start -->
+    <script
+      id="gorgias-chat-widget-install-v2"
+      src="https://config.gorgias.chat/gorgias-chat-bundle-loader.js?applicationId=15281"
+    ></script>
+    <script id="gorgias-chat-shopify-install">
+      !function(_){_.SHOPIFY_PERMANENT_DOMAIN="{{shop.permanent_domain}}",_.SHOPIFY_CUSTOMER_ID="{{customer.id}}",_.SHOPIFY_CUSTOMER_EMAIL="{{customer.email}}"}(window||{});
+    </script>
+    <!-- Gorgias Chat Widget End -->
+
+    <!-- Listrak Analytics – Javascript Framework -->
+    {% if customer %}
+      <script type="text/javascript">
+        var ltkCustObj = { "firstname": "{{customer.first_name}}", "lastname": "{{customer.last_name}}", "email": "{{customer.email}}"};
+      </script>
+    {% endif %}
+    <script type="text/javascript">
+      var biJsHost = (("https:" == document.location.protocol) ? "https://" : "http://");
+      (function (d, s, id, tid, vid) {
+          var js, ljs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return; js = d.createElement(s); js.id = id;
+          js.src = biJsHost + "cdn.listrakbi.com/scripts/script.js?m=" + tid + "&v=" + vid;
+          ljs.parentNode.insertBefore(js, ljs);
+      })(document, 'script', 'ltkSDK', 'ggtFb2t6LFUY', '1');
+    </script>
+
+    
+    <script>
+// Run the script after the window has fully loaded
+window.onload = function () {
+  // Get the parent div
+  const parentDiv = document.getElementById("ltk-inline-content-html-937d0b2d-5f3f-4b47-9dc1-4ab8b9769d51");
+
+  // Create the checkbox element
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.id = "toggle-checkbox";
+  checkbox.hidden = true; // Hide the checkbox from view
+
+  // Create the label element
+  const label = document.createElement("label");
+  label.setAttribute("for", "toggle-checkbox");
+
+  // Append the checkbox and label to the parent div
+  parentDiv.insertBefore(checkbox, parentDiv.firstChild);
+  parentDiv.insertBefore(label, parentDiv.firstChild);
+
+  // Add event listener to toggle visibility when checkbox state changes
+  checkbox.addEventListener("change", function () {
+    if (checkbox.checked) {
+      parentDiv.style.bottom = "-100px"; // Move the div down
+    } else {
+      parentDiv.style.bottom = "0"; // Reset to original position
+    }
+  });
+};
+
+    </script>\
+     {% render 'microdata-schema' %}
+ <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "kxmpun7gbq");
+</script>
+    
+  </body>
+</html>
