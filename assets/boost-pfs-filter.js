@@ -11,9 +11,131 @@ var boostPFSFilterConfig = {
 		/* Optional */
 		loadProductFirst: true, 
 		numberFilterTree: 2,
-		filterTreeMobileStyle: 'style1'
+		filterTreeMobileStyle: 'style1',
+		paginationType: "load-more",
 	},
 };
+
+// Initialize boostPFSFilterProducts
+window.boostPFSFilterProducts = [];
+window.boostPFSFilterProductsPromise = null;
+
+// Function to update boostPFSFilterProducts
+function updateBoostPFSFilterProducts(products) {
+  if (Array.isArray(products)) {
+    window.boostPFSFilterProducts = products;
+  }
+}
+// Function to fetch products data once and cache it
+function fetchAllProductsOnce() {
+  if (window.boostPFSFilterProductsPromise) {
+    return window.boostPFSFilterProductsPromise;
+  }
+
+  // Get current collection handle from URL
+  var currentPath = window.location.pathname;
+  var collectionHandle = null;
+
+  // Extract collection handle from URL patterns like /collections/collection-name
+  var collectionMatch = currentPath.match(/\/collections\/([^\/\?]+)/);
+  if (collectionMatch) {
+    collectionHandle = collectionMatch[1];
+  }
+
+  // Fallback: try to get from BoostPFS config if available
+  if (
+    !collectionHandle &&
+    typeof Globals !== "undefined" &&
+    Globals.collection &&
+    Globals.collection.handle
+  ) {
+    collectionHandle = Globals.collection.handle;
+  }
+
+  if (!collectionHandle) {
+    console.log(
+      "Could not determine collection handle, using empty products array"
+    );
+    window.boostPFSFilterProductsPromise = Promise.resolve([]);
+    return window.boostPFSFilterProductsPromise;
+  }
+
+  var fetchUrl =
+    "/collections/" + collectionHandle + "/products.json?limit=250";
+  console.log("Fetching all products from:", fetchUrl);
+
+  window.boostPFSFilterProductsPromise = fetch(fetchUrl)
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(function (jsonData) {
+      console.log("Successfully fetched", jsonData.products.length, "products");
+      // Convert to boost format and update global array
+      var convertedProducts = jsonData.products.map(function (product) {
+        return {
+          id: product.id,
+          title: product.title,
+          handle: product.handle,
+          variants: product.variants,
+          images_info: product.images,
+          tags: product.tags || [],
+          options_with_values: product.options || [],
+          skus: product.variants
+            ? product.variants
+                .map(function (v) {
+                  return v.sku;
+                })
+                .filter(Boolean)
+            : [],
+        };
+      });
+
+      updateBoostPFSFilterProducts(convertedProducts);
+      return convertedProducts;
+    })
+    .catch(function (error) {
+      console.error("Error fetching all products:", error);
+      return [];
+    });
+
+  return window.boostPFSFilterProductsPromise;
+}
+
+// Inject CSS for swatch loading states
+function injectSwatchStyles() {
+  if (!document.getElementById("boost-swatch-styles")) {
+    var style = document.createElement("style");
+    style.id = "boost-swatch-styles";
+    style.textContent = `
+      .color-swatch-loading {
+        font-size: 12px;
+        color: #666;
+        padding: 8px 0;
+        text-align: center;
+        font-style: italic;
+      }
+      .color-swatch-loading:after {
+        content: '';
+        display: inline-block;
+        margin-left: 4px;
+        width: 12px;
+        height: 12px;
+        border: 2px solid #ccc;
+        border-top: 2px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 (function() {
 	BoostPFS.inject(this);
@@ -363,30 +485,7 @@ var boostPFSFilterConfig = {
 		var html = '';
       var ExtraOff = data.tags;
       var vendor = data.vendor;
-      var vss = ExtraOff.indexOf("SS25") > -1;
-      /*var ff = ExtraOff.indexOf("FS25") > -1;*/
-      /*var ff = ExtraOff.indexOf("samplesale") > -1;
-      var pp = ExtraOff.indexOf("SAMPLESALE") > -1;
-      var mm = ExtraOff.indexOf("MDS25") > -1;*/
-      /*var ol = ExtraOff.indexOf("OL40") > -1;*/
-      /*var SOS = ExtraOff.indexOf("SOS25") > -1;*/
-      /*var DD = ExtraOff.indexOf("dressevent40") > -1;*/
-      /*var JJ = ExtraOff.indexOf("J25") > -1;*/
-      /*var MMF = ExtraOff.indexOf("MMS") > -1;*/
-      /*var DETT = ExtraOff.indexOf("TDE24") > -1;*/
-      /*var summer = ExtraOff.indexOf("JULY23") > -1;*/
-       /*var summersale = ExtraOff.indexOf("ss23") > -1;
-      var summersale1 = ExtraOff.indexOf("SS23") > -1;*/
-      /*var outdressevent = ExtraOff.indexOf("OutletDressevent23") > -1; */
-        /*var fandf = ExtraOff.indexOf("FF23") > -1; 
-     var coats = ExtraOff.indexOf("50offcoats") > -1;
-      var Fall = ExtraOff.indexOf("FALLEVENT22") > -1;
-      var semicoll = ExtraOff.indexOf("semicoll") > -1;
-      var semiout = ExtraOff.indexOf("semiout") > -1;
-      var outletspecial = ExtraOff.indexOf("suitingspecials") > -1;*/
-      
-      
-      
+      var vss = ExtraOff.indexOf("SS25") > -1;  
      
 		if (boostPFSThemeConfig.custom.show_product_info) {
 			var infoClass = (!boostPFSThemeConfig.custom.use_horizontal) ? 'ProductItem__Info--' + boostPFSThemeConfig.custom.product_info_alignment : '';
@@ -406,250 +505,557 @@ var boostPFSFilterConfig = {
           if(  vss == true ) { 
             html += '<p class="dressevent-outlet">' + "Extra 30% OFF Code: " + '<b>' + "SUMMER30" + '</b>' + '</p>'
             }
-          /*if(  cm24 == true ) { 
-            html += '<p class="dressevent">' + "Cyber Sale Specials " + '</p>'
-            }
-          if(  cm24 == true || cmts == true ) { 
-            html += '<p class="dressevent-outlet">' + "Cyber Sale Specials " + '</p>'
-            }*/
-          /*if(  DD == true ) { 
-            html += '<p class="dressevent">' + '<b>' + "Extra 40% OFF Code: " + '</b>' + "EXTRA40" + '</p>'
-            }*/
-          /*if(  JJ == true ) { 
-            html += '<p class="dressevent reactivation">' + '<b>' + "Extra 30% OFF Code: " + '</b>' + "30OFF" + '</p>'
-            }
-           if(  JJ == true ) { 
-            html += '<p class="dressevent-outlet">' + '<b>' + "Extra 25% OFF Code: " + '</b>' + "25OFF" + '</p>'
-            }
-          if(  JJ == true ) { 
-            html += '<p class="dressevent-outlet reactivation">' + '<b>' + "Extra 30% OFF Code: " + '</b>' + "30OFF" + '</p>'
-            }*/
-         /*if(  SS == true ) { 
-            html += '<p class="dressevent">' + '<b>' + "Extra 25% OFF Code: " + '</b>' + "SUMMER25" + '</p>'
-            }
-
-             if(  SS == true ) { 
-            html += '<p class="dressevent-outlet">' + '<b>' + "Extra 25% OFF Code: " + '</b>' + "SUMMER25" + '</p>'
-            }
-          if(  MMF == true ) { 
-            html += '<p class="dressevent-outlet">' + '<b>' + "Weekend Specials " + '</p>'
-            }*/
-
-           /*if(  SP == true ) { 
-            html += '<p class="dressevent ffthirty">' + '<b>' + "Extra 30% OFF | " + '</b>' + "Code: FRIENDS30" + '</p>'
-            }
-          
-          
-          if(  ff == true ) { 
-            html += '<p class="dressevent-outlet ffthirty">' + '<b>' + "Extra 30% OFF | " + '</b>' + "Code: FRIENDS30" + '</p>'
-            }*/
-         
-          /*if( BFS == true && BF == false || CSS == true && BF ==false ) { 
-            html += '<p class="dressevent special">' + '<b>' + "Cyber Specials" + '</b>' + '</p>'
-            }
-          
-           if( BFS == true && BF == false || CSS == true && BF ==false  ) { 
-            html += '<p class="dressevent-outlet">' + '<b>' + "Cyber Specials" + '</b>' + '</p>'
-            }*/
-          /*if(  Labor == true ) { 
-            html += '<p class="dressevent">' + '<b>' + "Extra 20% OFF code: " + '</b>' + "LDW20" + '</p>'
-            }
-          
-           if( Labor == true  ) { 
-            html += '<p class="dressevent-outlet">' + "Labor Day Sale " + '<br>' + "Extra 20% OFF code: " + '<b>' + "LDW20" + '</b>'  + '</p>'
-            }*/
-          /*if( wknd == true) { 
-            html += '<p class="dressevent-outlet">' + "Weekend Special"  + '</p>'
-            }*/
-          
-/*
-          if( fandf == true ) { 
-            html += '<p class="dressevent-outlet">' + "Friends and Family " + '<br>' + "Extra 30% OFF code: " + '<b>' + "FRIENDS30" + '</b>' + '</p>'
-            }*/
-           /*if( samplesale == true) { 
-            html += '<p class="dressevent-outlet sample">' + "Sample Sale " + '<br>' + "Up to 80% Off  " + '</p>'
-            } */
-
-         /*
-          if( lastchance == true || outletsweater == true  ) { 
-            html += '<p class="dressevent-outlet">' + "Last Chance Sale " + '<br>' + "Up to 80% Off  " + '</p>'
-            }
-            */
-
-           /*if( FandF == true ) { 
-            html += '<p class="dressevent-outlet">' + "Friends and Family " + '<br>' + "Extra 30% OFF code: " + '<b>' + "FRIENDS30" + '</b>' + '</p>'
-            }
-
-          if( coats == true  ) { 
-            html += '<p class="dressevent-outlet coats">' + "Coat Specials " + '<br>' + "Starting at $99 " + '</p>'
-            }*/
-
-          /*if( holidaysale == true && sweatershop == false && coatspecials == false && finalsale == false ) { 
-            html += '<p class="dressevent">' + "Holiday Sale " + '<br>' + "30 - 50% OFF " + '</p>'
-            }
-          if( sweatershop == true && holidaysale == true  ) { 
-            html += '<p class="dressevent special">' + "Sweater Specials " + '<br>' + "40% OFF " + '</p>'
-            }
-          if(  coatspecials == true && holidaysale == true || coatspecials == true && finalsale == true ) { 
-            html += '<p class="dressevent coats">' + "Coat Specials " + '<br>' + "Starting At $99 " + '</p>'
-            }
-          if( finalsale == true && holidaysale == false || finalsale == true && coatspecials == false ) { 
-            html += '<p class="dressevent">' + "Final Sale " + '<br>' + "60% OFF " + '</p>'
-            }
-
-          if( holidaysaleoutlet == true && sweatershop == false && coatspecials == false && finalsale == false ) { 
-            html += '<p class="dressevent-outlet">' + "Holiday Sale " + '<br>' + "30 - 70% OFF " + '</p>'
-            }
-          if( sweatershop == true && holidaysaleoutlet == true  ) { 
-            html += '<p class="dressevent-outlet special">' + "Sweater Specials " + '<br>' + "40% OFF " + '</p>'
-            }
-          if(  coatspecials == true && holidaysaleoutlet == true || coatspecials == true && finalsale == true ) { 
-            html += '<p class="dressevent-outlet coats">' + "Coat Specials " + '<br>' + "Starting At $99 " + '</p>'
-            }
-          if( finalsale == true && holidaysaleoutlet == false && coatspecials == false || finalsale == true && coatspecials == false ) { 
-            html += '<p class="dressevent-outlet">' + "Final Sale " + '<br>' + "60% OFF " + '</p>'
-            }*/
-          
-          
-          
-            /*if( blackfriday == true) { 
-            html += '<p class="dressevent">' + "Cyber Sale " + '<br>' + "Extra 30% OFF code: " + '<b>' + "CYBER30" + '</b>' + '</p>'
-            }
-          if( cyberspecials == true && specials == true || cyberspecials == true && specials == false ) { 
-            html += '<p class="dressevent cyberspecials">' + "Cyber Specials" + '<br>' + "starting at $39" + '</p>'
-            }
-        
-         if( blackfriday == true || outletblackfriday == true) { 
-            html += '<p class="dressevent-outlet">' + "Cyber Sale " + '<br>' + "Extra 30% OFF code: " + '<b>' + "CYBER30" + '</b>' + '</p>'
-            }
-          if( specials == true && cyberspecials == false) { 
-            html += '<p class="dressevent special">' + "Black Friday Specials" + '<br>' + "60% OFF" + '</p>'
-            }
-
-          if( taharicoats == true) { 
-            html += '<p class="dressevent-outlet coats">' + "Tahari Coats" + '<br>' + "Extra 30% OFF code: " + '<b>' + "CYBERCOATS" + '</b>' + '</p>'
-            }
-
-         
-         if( specials == true && blackfriday == false && outletblackfriday == false && taharicoats == false && cyberspecials == false) { 
-            html += '<p class="dressevent-outlet special">' + "Black Friday Specials" + '<br>' + "60% OFF" + '</p>'
-            }
-         if( cyberspecials == true && specials == true && taharicoats == false || cyberspecialsoutlet == true && taharicoats == false) { 
-            html += '<p class="dressevent-outlet cyberspecials">' + "Cyber Specials" + '<br>' + "starting at $39" + '</p>'
-            }*/
-          
-          /*if( samplesale == true) { 
-            html += '<p class="dressevent-outlet">' + "Sample Sale " + '<br>' + "60% - 80% OFF  " +  '</p>'
-            }*/
-          
-          /*if( Fall == true && coats == true ) { 
-            html += '<p class="dressevent">' + "Coat Event" + '<br>' + "Extra 50% OFF code:" + '<b>' + "COAT50" + '</b>' +  '</p>'
-            }
-          else if( Fall == true) { 
-            html += '<p class="dressevent" style="background:#9A2806">' + "Fall Event" + '<br>' + "Up To 50% OFF " + '</p>'
-            }
-         if( Fall == true && coats == true ) {
-            html += '<p class="dressevent-outlet">' + "Coat Event" + '<br>' + "Extra 50% OFF code:" + '<b>' + "COAT50" + '</b>' +  '</p>'
-         }
-         else if( Fall == true) { 
-            html += '<p class="dressevent-outlet" style="background:#9A2806">' + "Fall Event" + '<br>' + "Up To 50% OFF " +  '</p>'
-            }*/
-          /*if( semicoll == true) { 
-            html += '<p class="dressevent">' + "Semi Annual Sale - " +  "UP TO 50% OFF" + '</p>'
-            }
-          
-          if( semiout == true) { 
-           html += '<p class="dressevent-outlet">' + "Semi Annual Sale - " + "UP TO 70% OFF" + '</p>'
-            }
-          if( outletspecial == true) { 
-           html += '<p class="dressevent-outlet specials">' + "Outlet Specials" + '</p>'
-            }*/
-           /*if( laborspecial == true) { 
-           html += '<p class="dressevent-outlet specialss">' + "Labor Day Specials" + '</p>'
-            }*/
+			
+			 // Add metafields display if they exist
+			if (data.metafields && data.metafields.length > 0) {
+				html += '<div class="ProductItem__Metafields">';
+				data.metafields.forEach(function (metafield) {
+				if (metafield.value) {
+					html += '<p class="ProductItem__Metafield">';
+					html +=
+					'<span class="ProductItem__MetafieldKey">' +
+					metafield.key +
+					":</span> ";
+					html +=
+					'<span class="ProductItem__MetafieldValue">' +
+					metafield.value +
+					"</span>";
+					html += "</p>";
+				}
+				});
+				html += "</div>";
+			}
           
         
 
+			 html +='<div class="ProductItem__TitlePriceRow">';
 			html += '<h2 class="ProductItem__Title Heading">';
 			html += '<a href="{{itemUrl}}" aria-label="Click here to view '+ data.title + ' detail page">' + data.title + '</a>';
-			html += '</h2>';        
-			html += buildPrice(data);
+			html += '</h2>';
+			html += '<div class="ProductItem__PriceList Heading" style="margin-left: 12px; white-space: nowrap;">';        
+			html += buildPrice(data);			
+			html += "</div>";
+			html += "</div>";
 			if (boostPFSThemeConfig.custom.show_color_swatch) {
-				html += buildSwatch(data, indx);	
-			}
+				html +=
+					'<div class="ProductItem__ColorSwatchRow"><div>' +
+					buildSwatch(data, indx, null) +
+					"</div></div>";	
+				}
 			html += '</div>';
+      		html += "</div>";
 		}
 
 		return html;
 	}
 
-	function buildSwatch(data, indx) {
+	function getRelatedProductHandles(tags) {
+    var handles = [];
+    tags.forEach(function (tag) {
+      if (tag.indexOf("_color:") === 0) {
+        var handle = tag.split("_color:")[1];
+        if (handle) {
+          handles.push(handle);
+        }
+      }
+    });
+    return handles;
+  }
+
+	function buildSwatch(data, indx, allProducts) {
 		var itemSwatchHtml = '';
 		if (boostPFSThemeConfig.custom.show_color_swatch) {
 		var color_name = boostPFSThemeConfig.custom.section_id + '-' + data.id + '-' + indx;
-		data.options_with_values.forEach(function (option, index) {
-			var option_name = option.name.toLowerCase();
-			if (option_name.indexOf('color') != -1 || option_name.indexOf('colour') != -1 || option_name.indexOf('couleur') != -1) {
-			var values = '';
-			itemSwatchHtml += '<div class="ProductItem__ColorSwatchList" aria-hidden="true">';
-			var i = 0;
-			data.variants.forEach(function (variant) {
-				var temp = variant.merged_options.filter(function (obj) {
-				obj = obj.toLowerCase();
-				if (obj.indexOf('color') != -1 || obj.indexOf('colour') != -1)
-					return obj;
-				});
-				temp = temp[0].split(':');
+		var swatchListId = "swatch-list-" + data.id + "-" + indx;
+		itemSwatchHtml +=
+        '<div class="ProductItem__ColorSwatchList" id="' + swatchListId + '">';
+		var allColors = [];
+      	var variantsByColor = {};
+		var baseSku = null;
+      if (data.skus && data.skus.length > 0 && data.skus[0]) {
+        var firstSku = data.skus[0];
+        var skuParts = firstSku.split("-");
+        if (skuParts.length > 0) {
+          baseSku = skuParts[0];
+          console.log("Base SKU for current product:", baseSku);
+        }
+      }
+	  itemSwatchHtml +=
+        '<div class="color-swatch-loading">Loading colors...</div>';
+      itemSwatchHtml += "</div>";
 
-				var value = temp[1].toLowerCase();
-				if (values.indexOf(value) == -1) {
-				values = values + ',' + value;
-				values = values.split(',');
-				var size = '200,400,600,700,800,900,1000,1200';
-				var supported_sizes = imageSize(size, variant.image);
-				var color_image = Utils.optimizeImage(variant.image);
-				var name_color = Utils.slugify(value) + '.png';
-				var checked = (i == 0) ? 'checked=checked' : '';
-				var imageInfo = null;
-				var image_aspect_ratio = 1;
-				imageInfo = data.images_info.find(function (imageOb) {
-					if (imageOb.src == variant.image){
-						image_aspect_ratio = imageOb.width / imageOb.height;
-					return imageOb;
-					} 
-				});
-				if (!imageInfo){
-					if (data.images_info.length > 0){
-						imageInfo = data.images_info[0];
-					} else {
-						imageInfo = {
-						src: boostPFSConfig.general.no_image_url,
-							id: variant.id,
-							width: 480,
-							height: 480
-						}
-					}
-					
-				}
-				var dataImg = (imageInfo != null) ? '" data-image-url="' + imageInfo.src + '" data-image-widths="[' + supported_sizes + ']" data-image-aspect-ratio="1" data-image-id="' + imageInfo.id + '"' : '';
-				var color_input_id = color_name + "-" + values.length;
-				var variant_price = variant.price ? variant.price : 0;
-				var variant_compare_at_price = variant.compare_at_price ? variant.compare_at_price : 0;
-                var newurlcolor = Utils.getFilePath(Utils.slugify(value), Globals.swatchExtension, Settings.getSettingValue('general.swatchImageVersion'));
-				var url_color = Utils.getFilePath(Utils.slugify(value), Globals.swatchExtension, Settings.getSettingValue('general.swatchImageVersion'));
-				itemSwatchHtml += '<div class="ProductItem__ColorSwatchItem">';
-				itemSwatchHtml += '<input class="ColorSwatch__Radio" type="radio" ' + checked + ' name="' + color_name + '" id="' + color_input_id + '" value="' + value + '" data-image-aspect-ratio="' + image_aspect_ratio + '" data-variant-price="' + variant_price + '" data-variant-compare-at-price="' + variant_compare_at_price + '" data-variant-url="' + Utils.buildProductItemUrl(data) + '?variant=' + variant.id + '#Image' +  imageInfo.id + '"' + dataImg + '  aria-hidden="true">';
-				itemSwatchHtml += '<label class="ColorSwatch ColorSwatch--small" for="' + color_input_id + '" style="background-color: ' + value.replace(' ', '').toLowerCase() + '; background-image: url(' + newurlcolor + ')" title="' + value + '" data-tooltip="' + Utils.capitalize(value, true, true) + '">color-swatch</label>';
-				itemSwatchHtml += '</div>';
-				i++;
-				}
-			});
-			itemSwatchHtml += '</div>';
-			}
-		});
+	  // Use the centralized fetch function
+      fetchAllProductsOnce().then(function (fetchedProducts) {
+        console.log(
+          "products",
+          fetchedProducts ? fetchedProducts.length : 0,
+          data.title,
+          data.skus[0].split("-")[0]
+        );
+
+		if (fetchedProducts && fetchedProducts.length > 0) {
+          var swatchHtml = buildSwatchFromProducts(
+            data,
+            indx,
+            baseSku,
+            fetchedProducts
+          );
+
+		    var swatchContainer = document.getElementById(swatchListId);
+          if (swatchContainer) {
+            swatchContainer.innerHTML = swatchHtml;
+            // Re-bind click events for the new swatches
+            bindSwatchClickEvents(swatchContainer);
+          }
+        } else {
+          // Clear loading message if no products found
+          var swatchContainer = document.getElementById(swatchListId);
+          if (swatchContainer) {
+            swatchContainer.innerHTML = "";
+          }
 		}
-		return itemSwatchHtml;
-	}
+		});
+		 	return itemSwatchHtml;
+		}
+			return itemSwatchHtml;
+		}
+
+		// Unified function to build swatch HTML from products data
+  function buildSwatchFromProducts(data, indx, baseSku, productsToSearch) {
+    var allColors = [];
+    var variantsByColor = {};
+
+    // First, check for manual color grouping tags
+    var manualColorGroup = null;
+    console.log("tags", data.tags);
+    if (data.tags && data.tags.length > 0) {
+      for (var i = 0; i < data.tags.length; i++) {
+        var tag = data.tags[i];
+        if (tag.indexOf("_color_group:") === 0) {
+          manualColorGroup = tag.split("_color_group:")[1];
+          break;
+        }
+      }
+    }
+
+    var matchingProducts = [];
+
+    if (manualColorGroup) {
+      // Manual grouping: find all products with the same _color_group tag
+      console.log("Using manual color grouping:", manualColorGroup);
+      productsToSearch.forEach(function (product) {
+        if (product.tags && product.tags.length > 0) {
+          for (var i = 0; i < product.tags.length; i++) {
+            var tag = product.tags[i];
+            if (tag === "_color_group:" + manualColorGroup) {
+              matchingProducts.push(product);
+              break;
+            }
+          }
+        }
+      });
+    } else {
+      // Automatic grouping: find all products with matching base SKU
+      console.log("Using automatic SKU-based grouping with base SKU:", baseSku);
+      productsToSearch.forEach(function (product) {
+        if (product.skus && product.skus.length > 0) {
+          // Check if any SKU in this product starts with the same base SKU
+          for (var i = 0; i < product.skus.length; i++) {
+            if (product.skus[i] && product.skus[i].split("-")[0] === baseSku) {
+              matchingProducts.push(product);
+              break; // Found a match, no need to check other SKUs for this product
+            }
+          }
+        }
+      });
+    }
+
+    console.log(
+      "Found matching products:",
+      matchingProducts.length,
+      manualColorGroup ? "(manual grouping)" : "(SKU-based grouping)"
+    );
+
+    // Extract colors and variants from matching products
+    matchingProducts.forEach(function (product) {
+      var color = null;
+
+      // Try to get color from variants
+      if (product.variants && product.variants.length > 0) {
+        var mainVariant = product.variants[0];
+
+        // Try to extract color from merged_options
+        if (
+          mainVariant.merged_options &&
+          mainVariant.merged_options.length > 0
+        ) {
+          for (
+            var optionIndex = 0;
+            optionIndex < mainVariant.merged_options.length;
+            optionIndex++
+          ) {
+            var optionStr = mainVariant.merged_options[optionIndex];
+            if (typeof optionStr === "string") {
+              var parts = optionStr.split(":");
+              if (parts.length === 2) {
+                var optionName = parts[0].toLowerCase().trim();
+                var optionValue = parts[1].trim();
+                if (optionName.indexOf("color") !== -1) {
+                  color = optionValue;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        // Try to extract color from options_with_values
+        if (!color && product.options_with_values) {
+          var colorOption = product.options_with_values.find(function (opt) {
+            return opt.name && opt.name.toLowerCase().indexOf("color") !== -1;
+          });
+          if (colorOption && colorOption.values && colorOption.values[0]) {
+            color = colorOption.values[0];
+          }
+        }
+
+        // Fallback to option1/option2/option3
+        if (!color) {
+          color =
+            mainVariant.option1 || mainVariant.option2 || mainVariant.option3;
+        }
+      }
+
+      // If we found a color, add it to our list
+      if (color) {
+        var colorExists = allColors.find(function (c) {
+          return c.color.toLowerCase() === color.toLowerCase();
+        });
+
+        if (!colorExists) {
+          allColors.push({
+            color: color,
+            colorPart: product.handle,
+            product: product,
+          });
+          variantsByColor[color] =
+            product.variants && product.variants.length > 0
+              ? product.variants[0]
+              : null;
+        }
+      }
+    });
+
+    // Sort colors so current product's color is first
+    var currentColor = null;
+    if (data.variants && data.variants.length > 0) {
+      var mainVariant = data.variants[0];
+      if (mainVariant.merged_options && mainVariant.merged_options.length > 0) {
+        for (
+          var optionIndex = 0;
+          optionIndex < mainVariant.merged_options.length;
+          optionIndex++
+        ) {
+          var optionStr = mainVariant.merged_options[optionIndex];
+          if (typeof optionStr === "string") {
+            var parts = optionStr.split(":");
+            if (parts.length === 2) {
+              var optionName = parts[0].toLowerCase().trim();
+              var optionValue = parts[1].trim();
+              if (optionName.indexOf("color") !== -1) {
+                currentColor = optionValue;
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (!currentColor) {
+        currentColor =
+          mainVariant.option1 || mainVariant.option2 || mainVariant.option3;
+      }
+    }
+
+    if (currentColor) {
+      // Remove current color from array and add to front
+      allColors = allColors.filter(function (c) {
+        return c.color.toLowerCase() !== currentColor.toLowerCase();
+      });
+      allColors.unshift({
+        color: currentColor,
+        colorPart: data.handle,
+        product: data,
+      });
+      variantsByColor[currentColor] = data.variants[0];
+    }
+
+    // Build swatch HTML only if we have multiple colors
+    var itemSwatchHtml = "";
+    if (allColors.length > 1) {
+      console.log("Building swatches for", allColors.length, "colors");
+
+      var color_name =
+        boostPFSThemeConfig.custom.section_id + "-" + data.id + "-" + indx;
+
+      for (var colorIndex = 0; colorIndex < allColors.length; colorIndex++) {
+        var colorValue = allColors[colorIndex].color;
+        var colorPart = allColors[colorIndex].colorPart;
+        var productForColor = allColors[colorIndex].product;
+        var colorValueLower = colorValue.toLowerCase();
+        var variantForColor = variantsByColor[colorValue];
+
+        if (variantForColor && productForColor) {
+          // Get image info for this variant
+          var imageInfo = null;
+          var image_aspect_ratio = 1;
+
+          if (variantForColor.image) {
+            imageInfo =
+              productForColor.images_info &&
+              productForColor.images_info.find(function (imageOb) {
+                return imageOb.src === variantForColor.image;
+              });
+          }
+
+          if (
+            !imageInfo &&
+            productForColor.images_info &&
+            productForColor.images_info.length > 0
+          ) {
+            imageInfo = productForColor.images_info[0];
+          }
+
+          if (!imageInfo) {
+            imageInfo = {
+              src: boostPFSConfig.general.no_image_url,
+              id: variantForColor.id,
+              width: 480,
+              height: 480,
+            };
+          }
+
+          if (imageInfo) {
+            image_aspect_ratio = imageInfo.width / imageInfo.height;
+          }
+
+          // Build swatch HTML
+          var size = "200,400,600,700,800,900,1000,1200";
+          var supported_sizes = imageSize(size, imageInfo);
+          var color_input_id = color_name + "-" + colorIndex;
+          var checked = colorIndex === 0 ? "checked=checked" : "";
+
+          var dataImg = imageInfo
+            ? '" data-image-url="' +
+              imageInfo.src +
+              '" data-image-widths="[' +
+              supported_sizes +
+              ']" data-image-aspect-ratio="' +
+              image_aspect_ratio +
+              '" data-image-id="' +
+              imageInfo.id +
+              '"'
+            : "";
+
+          // Try to get color swatch image
+          var newurlcolor = Utils.getFilePath(
+            Utils.slugify(colorValue),
+            Globals.swatchExtension,
+            Settings.getSettingValue("general.swatchImageVersion")
+          );
+
+          itemSwatchHtml += '<div class="ProductItem__ColorSwatchItem">';
+          itemSwatchHtml +=
+            '<input class="ColorSwatch__Radio" type="radio" ' +
+            checked +
+            ' name="' +
+            color_name +
+            '" id="' +
+            color_input_id +
+            '" value="' +
+            colorValue +
+            '" data-image-aspect-ratio="' +
+            image_aspect_ratio +
+            '" data-variant-price="' +
+            (variantForColor.price || 0) +
+            '" data-variant-compare-at-price="' +
+            (variantForColor.compare_at_price || 0) +
+            '" data-variant-url="' +
+            Utils.buildProductItemUrl(productForColor) +
+            "?variant=" +
+            variantForColor.id +
+            (imageInfo ? "#Image" + imageInfo.id : "") +
+            '"' +
+            dataImg +
+            ' aria-hidden="true">';
+
+          itemSwatchHtml +=
+            '<label class="ColorSwatch ColorSwatch--small' +
+            (colorValueLower === "white" ? " ColorSwatch--white" : "") +
+            '" for="' +
+            color_input_id +
+            '" style="border-radius: 50%; background-color: ' +
+            colorValueLower.replace(/\s/g, "") +
+            "; background-image: url(" +
+            newurlcolor +
+            ')" title="' +
+            colorValue +
+            '" data-colorPart="' +
+            colorPart +
+            '" data-tooltip="' +
+            Utils.capitalize(colorValue, true, true) +
+            '"><span class="u-visually-hidden">' +
+            colorValue +
+            "</span></label>";
+
+          itemSwatchHtml += "</div>";
+        }
+      }
+    }
+
+    return itemSwatchHtml;
+  }
+
+		// Function to bind click events to newly created swatches
+
+		 function bindSwatchClickEvents(container) {
+    var swatches = container.querySelectorAll("label.ColorSwatch");
+    swatches.forEach(function (swatch) {
+      swatch.addEventListener("click", async function () {
+        console.log("Fetched swatch clicked!");
+
+        try {
+          const res = await fetch(
+            `/products/${this.getAttribute("data-colorPart")}.js`
+          );
+          const productData = await res.json();
+          const images = productData.images;
+
+          // Remove active class from all swatches in the same group
+          container.querySelectorAll("label.ColorSwatch").forEach(function (s) {
+            s.classList.remove("active");
+          });
+
+          // Add active class to clicked swatch
+          this.classList.add("active");
+
+          // Find the closest product wrapper and update images/info
+          var productWrapper =
+            this.closest(".ProductItem__Wrapper") ||
+            this.closest(".ProductItem");
+          if (productWrapper && images && images.length > 0) {
+            var mainImage = productWrapper.querySelector(
+              "img.ProductItem__Image:not(.ProductItem__Image--alternate)"
+            );
+            if (mainImage) {
+              // Update main image with all necessary attributes
+              mainImage.classList.remove("Image--fadeIn");
+              mainImage.src = images[0];
+              mainImage.setAttribute("data-src", images[0]);
+              mainImage.setAttribute("srcset", images[0]);
+              mainImage.setAttribute("data-srcset", images[0]);
+              mainImage.classList.remove(
+                "Image--lazyLoad",
+                "lazyautosizes",
+                "Image--lazyLoaded"
+              );
+              mainImage.style.display = "block";
+              // Don't remove style attribute here since we need to set styles after
+
+              setTimeout(function () {
+                mainImage.classList.add("Image--fadeIn");
+                mainImage.style.opacity = "1";
+                mainImage.style.visibility = "visible";
+                mainImage.style.display = "block";
+              }, 50);
+            }
+
+            // Update alternate image if exists
+            if (images.length > 1) {
+              var altImage = productWrapper.querySelector(
+                "img.ProductItem__Image--alternate"
+              );
+              if (altImage) {
+                // Update alternate image with all necessary attributes
+                altImage.classList.remove("Image--fadeIn");
+                altImage.src = images[1];
+                altImage.setAttribute("data-src", images[1]);
+                altImage.setAttribute("srcset", images[1]);
+                altImage.setAttribute("data-srcset", images[1]);
+                altImage.classList.remove(
+                  "Image--lazyLoad",
+                  "lazyautosizes",
+                  "Image--lazyLoaded"
+                );
+                altImage.style.display = "block";
+                // Don't remove style attribute here since we need to set styles after
+
+                setTimeout(function () {
+                  altImage.classList.add("Image--fadeIn");
+                  altImage.style.opacity = "1";
+                  altImage.style.visibility = "visible";
+                  altImage.style.display = "block";
+                }, 50);
+              }
+            }
+
+            // Update product links
+            var productUrl = `/products/${productData.handle}`;
+            var imageLink = productWrapper.querySelector(
+              "a.ProductItem__ImageWrapper"
+            );
+            var titleLink = productWrapper.querySelector(
+              ".ProductItem__Title a"
+            );
+
+            if (imageLink) imageLink.href = productUrl;
+            if (titleLink) {
+              titleLink.href = productUrl;
+              titleLink.textContent = productData.title;
+            }
+
+            // Update price - Get the first variant from the response
+            var variant =
+              productData.variants && productData.variants.length > 0
+                ? productData.variants[0]
+                : null;
+
+            if (variant) {
+              // Clone the product object to avoid mutating the original
+              var productForPrice = Object.assign({}, productData);
+              productForPrice.price_min = variant.price / 100;
+              productForPrice.price_max = variant.price / 100;
+              productForPrice.compare_at_price_min = variant.compare_at_price
+                ? variant.compare_at_price / 100
+                : null;
+              productForPrice.compare_at_price_max = variant.compare_at_price
+                ? variant.compare_at_price / 100
+                : null;
+              productForPrice.available = variant.available;
+
+              // Set global sale state for price building
+              var wasOnSale = onSale;
+              onSale = variant.compare_at_price > variant.price;
+
+              // Build and update price display
+              var variantPrice = buildPrice(productForPrice);
+              var priceContainer = productWrapper.querySelector(
+                ".ProductItem__PriceList"
+              );
+              if (priceContainer) {
+                priceContainer.innerHTML = variantPrice;
+              }
+
+              // Restore original sale state
+              onSale = wasOnSale;
+            }
+          }
+        } catch (error) {
+          console.error("Error updating product on swatch click:", error);
+        }
+      });
+    });
+  }
+
 	/************************** END BUILD PRODUCT ITEM ELEMENTS **************************/
 	/************************** BUILD TOOLBAR **************************/
 	// Build Pagination
@@ -740,6 +1146,16 @@ var boostPFSFilterConfig = {
 	}
 	/************************** END BUILD TOOLBAR **************************/
 
+	 // Pre-fetch products data before rendering starts
+  ProductList.prototype.beforeRender = function (data, eventType) {
+    if (!data) data = this.data;
+    if (!eventType) eventType = this.eventType;
+
+    // Start fetching products data early so it's available for swatches
+    console.log("Pre-fetching products data for swatches...");
+    fetchAllProductsOnce();
+  };
+
 	// Add additional feature for product list, used commonly in customizing product list
 	ProductList.prototype.afterRender = function(data, eventType) {
 		if (!data) data = this.data;
@@ -757,31 +1173,160 @@ var boostPFSFilterConfig = {
 		*/
 
 		// Fix image not load on Instagram browser - initialize swatch image
-		jQ(".ProductItem__Info .ProductItem__ColorSwatchList .ProductItem__ColorSwatchItem label.ColorSwatch").click(function() {
-			jQ(this).parent().parent().find('label.ColorSwatch').removeClass('active');
-			jQ(this).addClass('active');
-			var parent = jQ(this).parent();
-			var productImage = jQ(this).parent().parent().parent().parent().find('a.ProductItem__ImageWrapper');
-			var variantInfo = parent.find('input.ColorSwatch__Radio');
-			productImage.find('.AspectRatio .bc-sf-product-swatch-img').remove();
-			productImage.find('.AspectRatio').prepend('<img class="bc-sf-product-swatch-img" src="' + variantInfo.data('image-url') + '" />');
-			productImage.find('img.ProductItem__Image').hide();
-			productImage.attr('href', variantInfo.data('variant-url'));
-			var variantPrice = '';
-			if (variantInfo.data('variant-compare-at-price') > variantInfo.data('variant-price')){
-				variantPrice += '<span class="ProductItem__Price Price Price--highlight Text--subdued" data-money-convertible="">' + Utils.formatMoney(variantInfo.data('variant-price')) + '</span>'
-				variantPrice += '<span class="ProductItem__Price Price Price--compareAt Text--subdued" aria-hidden="true" data-money-convertible="">' + Utils.formatMoney(variantInfo.data('variant-compare-at-price')) + '</span>';
-			} else {
-				variantPrice += '<span class="ProductItem__Price Price Text--subdued" data-money-convertible>' + Utils.formatMoney(variantInfo.data('variant-price')) + '</span>';
-			}
-			jQ(this).closest('.ProductItem__Wrapper').find('.ProductItem__PriceList').html(variantPrice);
-		})
-	};
+		jQ(
+      ".ProductItem__Info .ProductItem__ColorSwatchList .ProductItem__ColorSwatchItem label.ColorSwatch"
+    ).click(async function () {
+      console.log("Swatch clicked!");
+
+      // Log the clicked element and its data
+      console.log("Clicked element:", this);
+      console.log("Clicked element data:", jQ(this).data());
+
+      const res = await fetch(
+        `/products/${jQ(this).data("colorpart")}.js`
+      ).then((response) => response.json());
+
+      const images = res.images;
+      console.log("Fetched images:", images);
+
+      // Remove active class from all swatches in the same group
+      jQ(this)
+        .parent()
+        .parent()
+        .find("label.ColorSwatch")
+        .removeClass("active");
+
+      // Add active class to clicked swatch
+      jQ(this).addClass("active");
+
+      // Find the closest product wrapper and main image
+      var productWrapper = jQ(this).closest(".ProductItem__Wrapper");
+      var mainImage = productWrapper.find(
+        "img.ProductItem__Image:not(.ProductItem__Image--alternate)"
+      );
+      console.log("Main image element:", mainImage);
+
+      // Update product title
+      var productTitle = productWrapper.find(".ProductItem__Title a");
+      if (productTitle.length && res.title) {
+        productTitle.text(res.title);
+        productTitle.attr(
+          "aria-label",
+          "Click here to view " + res.title + " detail page"
+        );
+      }
+
+      // Update product URL
+      var productUrl = `/products/${res.handle}`;
+      productWrapper
+        .find("a.ProductItem__ImageWrapper")
+        .attr("href", productUrl);
+      productTitle.attr("href", productUrl);
+
+      if (images && images.length > 0) {
+        // Main image
+        if (mainImage.length) {
+          mainImage.off("load");
+          mainImage.removeClass("Image--fadeIn");
+          mainImage.attr("src", images[0]);
+          mainImage.attr("data-src", images[0]);
+          mainImage.attr("srcset", images[0]);
+          mainImage.attr("data-srcset", images[0]);
+          mainImage.removeClass(
+            "Image--lazyLoad lazyautosizes Image--lazyLoaded"
+          );
+          mainImage.show();
+          // Don't remove style attribute here since we need to set styles after
+          setTimeout(function () {
+            mainImage.addClass("Image--fadeIn");
+            mainImage.css({
+              opacity: 1,
+              visibility: "visible",
+              display: "block",
+            });
+          }, 50);
+        }
+
+        // Alternate image
+        if (images.length > 1) {
+          var altImage = productWrapper.find(
+            "img.ProductItem__Image--alternate"
+          );
+          if (altImage.length) {
+            altImage.off("load");
+            altImage.removeClass("Image--fadeIn");
+            altImage.attr("src", images[1]);
+            altImage.attr("data-src", images[1]);
+            altImage.attr("srcset", images[1]);
+            altImage.attr("data-srcset", images[1]);
+            altImage.removeClass(
+              "Image--lazyLoad lazyautosizes Image--lazyLoaded"
+            );
+            altImage.show();
+            // Don't remove style attribute here since we need to set styles after
+            setTimeout(function () {
+              altImage.addClass("Image--fadeIn");
+              altImage.css({
+                opacity: 1,
+                visibility: "visible",
+                display: "block",
+              });
+            }, 50);
+          }
+        }
+      }
+
+      // Update price
+      var variantPrice = "";
+
+      // Get the first variant from the response
+      var variant =
+        res.variants && res.variants.length > 0 ? res.variants[0] : null;
+
+      if (variant) {
+        // Clone the product object to avoid mutating the original
+        var productForPrice = Object.assign({}, res);
+        productForPrice.price_min = variant.price / 100;
+        productForPrice.price_max = variant.price / 100;
+        productForPrice.compare_at_price_min = variant.compare_at_price
+          ? variant.compare_at_price / 100
+          : null;
+        productForPrice.compare_at_price_max = variant.compare_at_price
+          ? variant.compare_at_price / 100
+          : null;
+        productForPrice.available = variant.available;
+
+        if (variant.compare_at_price > variant.price) {
+          onSale = true;
+        }
+
+        // Now use the full product object with updated prices
+        variantPrice = buildPrice(productForPrice);
+      }
+
+      // Update price display
+      productWrapper.find(".ProductItem__PriceList").html(variantPrice);
+
+      // Add fade-in class to product wrapper
+      productWrapper
+        .find(".AspectRatio, .ProductItem__ImageWrapper")
+        .addClass("is-visible");
+    });
+  };
 
 	// Build additional elements
 	FilterResult.prototype.afterRender = function(data, eventType) {
 		if (!data) data = this.data;
 		if (!eventType) eventType = this.eventType;
+		  // Update boostPFSFilterProducts with the current products
+    if (data && data.products) {
+      updateBoostPFSFilterProducts(data.products);
+    }
+
+    // Hide loading state after render completes
+    jQ(".boost-pfs-filter-loading").hide();
+
+
 	};  
   
 	// Build Default layout
