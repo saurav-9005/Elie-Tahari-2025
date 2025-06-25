@@ -277,7 +277,7 @@
         {%- assign associated_with = all_products[product_handler] -%}
         {%- if associated_with != empty -%}
           <div class="Section Section--spacingNormal shop-the-look">             
-              {% render 'product-item', product: associated_with, use_horizontal: true, show_labels: false, show_product_info: true, show_vendor: false, show_price_on_hover: false %}
+              {% render 'product-item', product: associated_with, use_horizontal: true, show_labels: false, show_product_info: true, show_vendor: false, show_price_on_hover: false, is_shop_the_look: true %}
           </div>
         {%- endif -%}
       {%- endfor -%}
