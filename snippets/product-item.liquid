@@ -260,10 +260,49 @@
       </div>
     {%- endif -%}
   </div>
+ {%- if is_shop_the_look == true -%}
+    <form method="post" action="/cart/add" class="ProductItem__Form" data-product-form data-product-id="{{ product.id }}">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      
+      {% if product.has_only_default_variant == false and is_shop_the_look %}
+        <div class="ProductItem__SizeSelector">
+          <select name="id" class="ProductItem__SizeSelect" data-variant-select="{{ product.id }}">
+            {% for variant in product.variants %}
+              <option 
+                value="{{ variant.id }}"
+                {% if variant.available == false %}disabled{% endif %}
+                {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+              >
+                {{ variant.title }} - {{ variant.price | money }}
+                {% if variant.available == false %} - Sold out{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
 
-  {%- if use_horizontal -%}
+      <div class="ProductItem__Quantity">
+        <input type="number" name="quantity" value="1" min="1" class="ProductItem__QuantityInput">
+      </div>
+
+      <button 
+        type="submit" 
+        class="ProductItem__AddToCart Button Button--primary Button--full"
+        data-action="add-to-cart"
+        data-product-id="{{ product.id }}"
+      >
+        {% if product.available %}
+          {{ 'product.form.add_to_cart' | t }}
+        {% else %}
+          {{ 'product.form.sold_out' | t }}
+        {% endif %}
+      </button>
+    </form>
+  {%- endif -%}
+
+  {% comment %}{ %- if use_horizontal -%}
     <a href="{{ product.url }}" class="ProductItem__ViewButton Button Button--secondary hidden-pocket" aria-label="More color options to choose. Click here to view this item">
       {{- 'collection.product.view_product' | t -}}
     </a>
-  {%- endif -%}
+  {%- endif -%}{% endcomment %}
 </div>
